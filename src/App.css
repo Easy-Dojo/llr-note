@@ -5,3 +5,7 @@
 .site-layout .site-layout-background {
   background: #fff;
 }
+
+.ant-list-item-action {
+  margin-left: 10px!important;
+}
