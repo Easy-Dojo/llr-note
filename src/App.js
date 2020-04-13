@@ -1,33 +1,36 @@
 import React from 'react';
 import './App.css';
-import { Layout, Menu } from 'antd'
+import { Layout, Menu, Input } from 'antd'
 import {
   AppstoreOutlined,
   BarChartOutlined,
   CloudOutlined,
   ShopOutlined,
   TeamOutlined,
-  UserOutlined,
   UploadOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
+import FieldBinaryOutlined
+  from '@ant-design/icons/lib/icons/FieldBinaryOutlined'
 const { Header, Content, Sider } = Layout;
+const { Search } = Input;
 
 function App() {
   return (
     <Layout className="App">
       <Sider
-        style={{
-          overflow: 'auto',
-          height: '100vh',
-          position: 'fixed',
-          left: 0,
-        }}
+        breakpoint="lg"
+        collapsedWidth="0"
       >
-        <div className="logo" />
+        <Search
+          size="small"
+          placeholder="search..."
+          onSearch={value => console.log(value)}
+          style={{ width: 170, margin: "15px" }}
+        />
         <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
           <Menu.Item key="1">
-            <UserOutlined />
+            <FieldBinaryOutlined />
             <span className="nav-text">nav 1</span>
           </Menu.Item>
           <Menu.Item key="2">
@@ -61,7 +64,7 @@ function App() {
         </Menu>
       </Sider>
 
-      <Layout className="site-layout" style={{ marginLeft: 200 }}>
+      <Layout className="site-layout">
         <Header className="site-layout-background" style={{ padding: 0 }} />
         <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
           <div className="site-layout-background" style={{ padding: 24, textAlign: 'center' }}>
