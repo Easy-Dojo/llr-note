@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { Input, List, Tooltip, Typography } from 'antd'
+import { Button, Input, List, Tooltip, Typography } from 'antd'
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined'
 import CloseOutlined from '@ant-design/icons/lib/icons/CloseOutlined'
 import CheckOutlined from '@ant-design/icons/lib/icons/CheckOutlined'
+import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 
 const {Paragraph} = Typography
 const data = [
@@ -38,11 +39,20 @@ const FileList = () => {
 
   const saveEditFile = (id, savedValue) => {
     console.log(`saveEditFile, id: ${id}, savedValue: ${savedValue}`)
+    setEditFileId(null)
+    setValue('')
+  }
+
+  const handleAddFileButtonClick = () => {
+    console.log('add new file')
   }
 
   return <List
     dataSource={data}
     size={'small'}
+    footer={<List.Item>
+      <Button size={'small'} block onClick={() => handleAddFileButtonClick()}><PlusOutlined/></Button>
+    </List.Item>}
     renderItem={item => (
       <List.Item
         actions={
