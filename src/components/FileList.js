@@ -7,22 +7,11 @@ import CheckOutlined from '@ant-design/icons/lib/icons/CheckOutlined'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import useKeyPress from '../hooks/useKeyPress'
 import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined'
+import PropTypes from 'prop-types'
 
 const {Paragraph} = Typography
-const data = [
-  {
-    id: 1,
-    title: 'Ant Design Title 1是生生世世',
-    loading: false,
-  },
-  {
-    id: 2,
-    title: 'Ant Design Title 2',
-    loading: true,
-  },
-]
 
-const FileList = () => {
+const FileList = (props) => {
   const [editFileId, setEditFileId] = useState(null)
   const [value, setValue] = useState('')
   const enterPress = useKeyPress(13)
@@ -67,10 +56,10 @@ const FileList = () => {
   }
 
   return <List
-    dataSource={data}
-    size={'small'}
+    dataSource={props.data}
+    size='small'
     footer={<List.Item>
-      <Button style={{width: "78px"}} size={'small'} type="primary"
+      <Button style={{width: '78px'}} size='small' type="primary"
               onClick={() => handleAddFileButtonClick()}>
         <PlusOutlined/> Add
       </Button>
@@ -84,15 +73,19 @@ const FileList = () => {
         actions={
           (editFileId !== item.id)
             ? [
-              <a onClick={() => editFile(item.id, item.title)}
-                 key="file-edit"><EditOutlined/></a>,
-              <a onClick={() => deleteFile(item.id)}
-                 key="file-delete"><DeleteOutlined/></a>]
+              <Button style={{padding: 0}} type='link'
+                      onClick={() => editFile(item.id, item.title)}
+                      key="file-edit"><EditOutlined/></Button>,
+              <Button style={{padding: 0}} type='link'
+                      onClick={() => deleteFile(item.id)}
+                      key="file-delete"><DeleteOutlined/></Button>]
             : [
-              <a onClick={() => cancelEditFile()}
-                 key="file-edit-cancel"><CloseOutlined/></a>,
-              <a onClick={() => saveEditFile(item.id, value)}
-                 key="file-edit-save"><CheckOutlined/></a>]
+              <Button style={{padding: 0}} type='link'
+                      onClick={() => cancelEditFile()}
+                      key="file-edit-cancel"><CloseOutlined/></Button>,
+              <Button style={{padding: 0}} type='link'
+                      onClick={() => saveEditFile(item.id, value)}
+                      key="file-edit-save"><CheckOutlined/></Button>]
         }
       >
         {
@@ -110,6 +103,25 @@ const FileList = () => {
       </List.Item>
     )}
   />
+}
+
+FileList.propTypes = {
+  data: PropTypes.array,
+}
+
+FileList.defaultProps = {
+  data: [
+    {
+      id: 1,
+      title: 'Ant Design Title 1是生生世世',
+      loading: false,
+    },
+    {
+      id: 2,
+      title: 'Ant Design Title 2',
+      loading: true,
+    },
+  ],
 }
 
 export default FileList
