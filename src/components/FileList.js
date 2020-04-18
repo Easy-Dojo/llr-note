@@ -56,7 +56,8 @@ const FileList = (props) => {
   }
 
   return <List
-    dataSource={props.data}
+    style={{borderTop: '1px solid #f0f0f0'}}
+    dataSource={props.files}
     size='small'
     footer={<List.Item>
       <Button style={{width: '78px'}} size='small' type="primary"
@@ -70,6 +71,7 @@ const FileList = (props) => {
     </List.Item>}
     renderItem={item => (
       <List.Item
+        style={{height: '40px'}}
         actions={
           (editFileId !== item.id)
             ? [
@@ -106,22 +108,7 @@ const FileList = (props) => {
 }
 
 FileList.propTypes = {
-  data: PropTypes.array,
-}
-
-FileList.defaultProps = {
-  data: [
-    {
-      id: 1,
-      title: 'Ant Design Title 1是生生世世',
-      loading: false,
-    },
-    {
-      id: 2,
-      title: 'Ant Design Title 2',
-      loading: true,
-    },
-  ],
+  files: PropTypes.array,
 }
 
 export default FileList

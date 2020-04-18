@@ -5,3 +5,10 @@
 .site-layout {
   background: #fff;
 }
+
+.start-page {
+  font-size: 30px;
+  height: 300px;
+  line-height: 300px;
+  text-align: center;
+}
