@@ -1,142 +1,51 @@
-import React from 'react';
-import './App.css';
-import { Layout, Menu, Input } from 'antd'
-import {
-  AppstoreOutlined,
-  BarChartOutlined,
-  CloudOutlined,
-  ShopOutlined,
-  TeamOutlined,
-  UploadOutlined,
-  VideoCameraOutlined,
-} from '@ant-design/icons';
-import FieldBinaryOutlined
-  from '@ant-design/icons/lib/icons/FieldBinaryOutlined'
+import React from 'react'
+import './App.css'
+import { Input, Layout } from 'antd'
 import FileList from './components/FileList'
-const { Header, Content, Sider } = Layout;
-const { Search } = Input;
+import TabList from './components/TabList'
 
-function App() {
+const {Content, Sider} = Layout
+const {Search} = Input
+
+const defaultFiles = [
+  {id: 1, title: 'Tab 1', content: 'Content of Tab Pane 1'},
+  {id: 2, title: 'Tab 2', content: 'Content of Tab Pane 2'},
+  {id: 3, title: 'Tab 3', content: 'Content of Tab Pane 3'},
+]
+
+function App () {
   return (
-    <Layout className="App">
+    <Layout>
       <Sider
         theme={'light'}
-        breakpoint="lg"
+        breakpoint="md"
         collapsedWidth="0"
       >
         <Search
           size="small"
           placeholder="search..."
           onSearch={value => console.log(value)}
-          style={{ width: 170, margin: "15px" }}
+          style={{width: 170, margin: '15px'}}
         />
         <FileList/>
       </Sider>
 
       <Layout className="site-layout">
-        <Header className="site-layout-background" style={{ padding: 0 }} />
-        <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-          <div className="site-layout-background" style={{ padding: 24, textAlign: 'center' }}>
-            ...
-            <br />
-            Really
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            long
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            content
-          </div>
+        <Content style={{
+          minHeight: '500px',
+          overflow: 'initial',
+        }}>
+          <TabList
+            files={defaultFiles}
+            onTabClick={(id) => {console.log('onTabClick', id)}}
+            onCloseTab={(id) => {console.log('onCloseTab', id)}}
+            unsavedIds={[1, 2]}
+            activeId={'1'}
+          />
         </Content>
       </Layout>
     </Layout>
-  );
+  )
 }
 
-export default App;
+export default App

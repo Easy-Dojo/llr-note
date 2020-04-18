@@ -1,11 +1,7 @@
-.App {
-  text-align: center;
-}
-
-.site-layout .site-layout-background {
-  background: #fff;
-}
-
 .ant-list-item-action {
   margin-left: 10px!important;
+}
+
+.site-layout {
+  background: #fff;
 }

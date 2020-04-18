@@ -1,0 +1,29 @@
+.tab-list-component {
+  .close-icon {
+    visibility: hidden;
+  }
+
+  .tab-item {
+    width: 92px;
+  }
+
+  .tab-item:hover {
+    .close-icon {
+      visibility: visible;
+    }
+
+    .unsaved-icon {
+      display: none;
+    }
+  }
+
+  .tab-item.active {
+    .close-icon {
+      visibility: visible;
+    }
+
+    .unsaved-icon {
+      display: none;
+    }
+  }
+}
