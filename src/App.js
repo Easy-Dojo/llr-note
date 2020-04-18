@@ -45,6 +45,20 @@ function App () {
     }
   }
 
+  const fileChange = (id, value) => {
+    const newFiles = files.map(file => {
+      if (file.id === id) {
+        file.body = value
+      }
+      return file
+    })
+    setFiles(newFiles)
+    if (!unsavedFileIDs.includes(id)) {
+      setUnsavedFileIDs([...unsavedFileIDs, id])
+    }
+    console.log(newFiles, unsavedFileIDs)
+  }
+
   return (
     <Layout>
       <Sider
@@ -81,14 +95,14 @@ function App () {
               <TabList
                 files={openedFiles}
                 activeId={activeFileID}
-                unsavedIds={[unsavedFileIDs]}
+                unsavedIds={unsavedFileIDs}
                 onTabClick={tabClick}
                 onCloseTab={tabClose}
               />
               <SimpleMDEEditor
                 key={activeFile && activeFile.id}
                 value={activeFile && activeFile.body}
-                onChange={(value) => {console.log(value)}}
+                onChange={(value) => {fileChange(activeFile.id, value)}}
                 options={{
                   minHeight: '515px',
                 }}
