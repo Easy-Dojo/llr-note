@@ -3,12 +3,14 @@ import './App.css'
 import { Input, Layout } from 'antd'
 import FileList from './components/FileList'
 import TabList from './components/TabList'
+import SimpleMDEEditor from 'react-simplemde-editor'
+import "easymde/dist/easymde.min.css"
 
 const {Content, Sider} = Layout
 const {Search} = Input
 
 const defaultFiles = [
-  {id: 1, title: 'Tab 1', content: 'Content of Tab Pane 1'},
+  {id: 1, title: 'Tab 1', content: '### Content of Tab Pane 1'},
   {id: 2, title: 'Tab 2', content: 'Content of Tab Pane 2'},
   {id: 3, title: 'Tab 3', content: 'Content of Tab Pane 3'},
 ]
@@ -41,6 +43,13 @@ function App () {
             onCloseTab={(id) => {console.log('onCloseTab', id)}}
             unsavedIds={[1, 2]}
             activeId={'1'}
+          />
+          <SimpleMDEEditor
+            value={defaultFiles[0].content}
+            onChange={(value)=>{console.log(value)}}
+            options={{
+              minHeight: '515px'
+            }}
           />
         </Content>
       </Layout>
