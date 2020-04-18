@@ -8,14 +8,14 @@ import classNames from 'classnames'
 
 const TabList = ({files, activeId, unsavedIds, onTabClick, onCloseTab}) => {
   return <Menu className="tab-list-component" style={{lineHeight: '36px'}}
-               selectedKeys={[activeId]}
+               selectedKeys={[activeId.toString()]}
                mode="horizontal">
     {files.map(file => {
       const withUnsavedMark = unsavedIds.includes(file.id)
       return (
         <Menu.Item
-          className={classNames('tab-item',
-            {active: activeId === file.id.toString()})}
+          className={
+            classNames('tab-item', {active: (activeId === file.id)})}
           key={file.id}
           onClick={() => {onTabClick(file.id)}}>
           <span style={{marginRight: '10px'}}>{file.title}</span>
@@ -35,7 +35,7 @@ const TabList = ({files, activeId, unsavedIds, onTabClick, onCloseTab}) => {
 
 TabList.propTypes = {
   files: PropTypes.array,
-  activeId: PropTypes.string,
+  activeId: PropTypes.number,
   unsavedIds: PropTypes.array,
   onTabClick: PropTypes.func,
   onCloseTab: PropTypes.func,

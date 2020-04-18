@@ -71,6 +71,7 @@ const FileList = (props) => {
     </List.Item>}
     renderItem={item => (
       <List.Item
+        onClick={() => props.onFileClick(item.id)}
         style={{height: '40px'}}
         actions={
           (editFileId !== item.id)

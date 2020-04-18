@@ -24,6 +24,27 @@ function App () {
   const openedFiles = openedFileIDs.map(
     openedID => files.find(file => file.id === openedID))
   const activeFile = files.find(file => file.id === activeFileID)
+
+  const fileClick = (fileID) => {
+    setActiveFileID(fileID)
+    setOpenedFileIDs(Array.from(new Set([...openedFileIDs, fileID])))
+  }
+
+  const tabClick = (fileID) => {
+    setActiveFileID(fileID)
+  }
+
+  const tabClose = (fileID) => {
+    const filterIDs = openedFileIDs.filter(id => fileID !== id)
+    setOpenedFileIDs(filterIDs)
+
+    if (filterIDs.length > 0) {
+      setActiveFileID(filterIDs[0])
+    } else {
+      setActiveFileID('')
+    }
+  }
+
   return (
     <Layout>
       <Sider
@@ -38,7 +59,11 @@ function App () {
           onSearch={value => console.log(value)}
           style={{width: 170, margin: '15px'}}
         />
-        <FileList files={files}/>
+        <FileList
+          files={files}
+          onFileClick={fileClick}
+          onFileDelete={(id) => {console.log('delete file id:', id)}}
+        />
       </Sider>
 
       <Layout className="site-layout">
@@ -57,10 +82,11 @@ function App () {
                 files={openedFiles}
                 activeId={activeFileID}
                 unsavedIds={[unsavedFileIDs]}
-                onTabClick={(id) => {console.log('onTabClick', id)}}
-                onCloseTab={(id) => {console.log('onCloseTab', id)}}
+                onTabClick={tabClick}
+                onCloseTab={tabClose}
               />
               <SimpleMDEEditor
+                key={activeFile && activeFile.id}
                 value={activeFile && activeFile.body}
                 onChange={(value) => {console.log(value)}}
                 options={{
@@ -69,7 +95,6 @@ function App () {
               />
             </>
           }
-
         </Content>
       </Layout>
     </Layout>
