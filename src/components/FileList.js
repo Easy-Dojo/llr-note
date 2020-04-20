@@ -32,10 +32,6 @@ const FileList = (props) => {
     setValue(initialValue)
   }
 
-  const deleteFile = (id) => {
-    console.log('delete:' + id)
-  }
-
   const cancelEditFile = () => {
     setEditFileId(null)
     setValue('')
@@ -80,7 +76,10 @@ const FileList = (props) => {
                       onClick={() => editFile(item.id, item.title)}
                       key="file-edit"><EditOutlined/></Button>,
               <Button style={{padding: 0}} type='link'
-                      onClick={() => deleteFile(item.id)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        props.onFileDelete(item.id)
+                      }}
                       key="file-delete"><DeleteOutlined/></Button>]
             : [
               <Button style={{padding: 0}} type='link'

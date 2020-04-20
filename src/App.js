@@ -56,7 +56,13 @@ function App () {
     if (!unsavedFileIDs.includes(id)) {
       setUnsavedFileIDs([...unsavedFileIDs, id])
     }
-    console.log(newFiles, unsavedFileIDs)
+  }
+
+  const deleteFile = (id) => {
+    const newFiles = files.filter(file => file.id !== id)
+    setFiles(newFiles)
+
+    tabClose(id)
   }
 
   return (
@@ -76,7 +82,7 @@ function App () {
         <FileList
           files={files}
           onFileClick={fileClick}
-          onFileDelete={(id) => {console.log('delete file id:', id)}}
+          onFileDelete={deleteFile}
         />
       </Sider>
 
