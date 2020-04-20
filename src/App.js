@@ -65,6 +65,16 @@ function App () {
     tabClose(id)
   }
 
+  const updateFileName = (id, title) => {
+    const newFiles = files.map(file => {
+      if (file.id === id) {
+        file.title = title
+      }
+      return file
+    })
+    setFiles(newFiles)
+  }
+
   return (
     <Layout>
       <Sider
@@ -83,6 +93,7 @@ function App () {
           files={files}
           onFileClick={fileClick}
           onFileDelete={deleteFile}
+          onSaveEdit={updateFileName}
         />
       </Sider>
 

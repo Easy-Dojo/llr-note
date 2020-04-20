@@ -38,7 +38,7 @@ const FileList = (props) => {
   }
 
   const saveEditFile = (id, savedValue) => {
-    console.log(`saveEditFile, id: ${id}, savedValue: ${savedValue}`)
+    props.onSaveEdit(id, savedValue)
     setEditFileId(null)
     setValue('')
   }
