@@ -20,10 +20,12 @@ function App () {
   const [activeFileID, setActiveFileID] = useState('')
   const [openedFileIDs, setOpenedFileIDs] = useState([])
   const [unsavedFileIDs, setUnsavedFileIDs] = useState([])
+  const [searchedFiles, setSearchedFiles] = useState([])
 
   const openedFiles = openedFileIDs.map(
     openedID => files.find(file => file.id === openedID))
   const activeFile = files.find(file => file.id === activeFileID)
+  const fileListArr = (searchedFiles.length > 0) ? searchedFiles : files
 
   const fileClick = (fileID) => {
     setActiveFileID(fileID)
@@ -75,6 +77,12 @@ function App () {
     setFiles(newFiles)
   }
 
+  const fileSearch = (event) => {
+    const keyword = event.target.value
+    const newFiles = files.filter(file => file.title.includes(keyword))
+    setSearchedFiles(newFiles)
+  }
+
   return (
     <Layout>
       <Sider
@@ -86,11 +94,11 @@ function App () {
         <Search
           size="small"
           placeholder="search..."
-          onSearch={value => console.log(value)}
+          onChange={fileSearch}
           style={{width: 170, margin: '15px'}}
         />
         <FileList
-          files={files}
+          files={fileListArr}
           onFileClick={fileClick}
           onFileDelete={deleteFile}
           onSaveEdit={updateFileName}
