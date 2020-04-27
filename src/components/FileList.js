@@ -11,7 +11,7 @@ import PropTypes from 'prop-types'
 
 const {Paragraph} = Typography
 
-const FileList = (props) => {
+const FileList = ({files, onFileDelete, onSaveEdit, onAddFileButtonClick, onFileClick}) => {
   const [editFileId, setEditFileId] = useState(null)
   const [value, setValue] = useState('')
   const enterPress = useKeyPress(13)
@@ -28,12 +28,12 @@ const FileList = (props) => {
   })
 
   useEffect(() => {
-    const newFile = props.files.find(item => item.isNew)
+    const newFile = files.find(item => item.isNew)
     if (newFile) {
       setEditFileId(newFile.id)
       setValue(newFile.title)
     }
-  }, [props.files])
+  }, [files])
 
   const editFile = (id, initialValue) => {
     setEditFileId(id)
@@ -41,18 +41,18 @@ const FileList = (props) => {
   }
 
   const cancelEditFile = (id) => {
-    const editItem = props.files.find(file => file.id === id)
+    const editItem = files.find(file => file.id === id)
     setEditFileId(null)
     setValue('')
 
     if (editItem.isNew) {
-      props.onFileDelete(editItem.id)
+      onFileDelete(editItem.id)
     }
   }
 
   const saveEditFile = (id, savedValue) => {
     if (savedValue.trim() !== '') {
-      props.onSaveEdit(id, savedValue)
+      onSaveEdit(id, savedValue)
       setEditFileId(null)
       setValue('')
     }
@@ -64,11 +64,11 @@ const FileList = (props) => {
 
   return <List
     style={{borderTop: '1px solid #f0f0f0'}}
-    dataSource={props.files}
+    dataSource={files}
     size='small'
     footer={<List.Item>
       <Button style={{width: '78px'}} size='small' type="primary"
-              onClick={props.onAddFileButtonClick}>
+              onClick={onAddFileButtonClick}>
         <PlusOutlined/> Add
       </Button>
       <Button size={'small'}
@@ -78,7 +78,7 @@ const FileList = (props) => {
     </List.Item>}
     renderItem={item => (
       <List.Item
-        onClick={() => props.onFileClick(item.id)}
+        onClick={() => onFileClick(item.id)}
         style={{height: '40px'}}
         actions={
           (editFileId === item.id || item.isNew) ? [
@@ -94,7 +94,7 @@ const FileList = (props) => {
             <Button style={{padding: 0}} type='link'
                     onClick={(e) => {
                       e.stopPropagation()
-                      props.onFileDelete(item.id)
+                      onFileDelete(item.id)
                     }}
                     key="file-delete"><DeleteOutlined/></Button>]
         }
