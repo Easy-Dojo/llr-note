@@ -1,0 +1,14 @@
+.tab-list-component .close-icon {
+  visibility: hidden; }
+.tab-list-component .tab-item {
+  padding-right: 0; }
+.tab-list-component .tab-item:hover .close-icon {
+  visibility: visible; }
+.tab-list-component .tab-item:hover .unsaved-icon {
+  display: none; }
+.tab-list-component .tab-item.active .close-icon {
+  visibility: visible; }
+.tab-list-component .tab-item.active .unsaved-icon {
+  display: none; }
+
+/*# sourceMappingURL=TabList.css.map */

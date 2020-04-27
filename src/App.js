@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import './App.css'
 import { Input, Layout } from 'antd'
 import FileList from './components/FileList'
 import TabList from './components/TabList'
 import SimpleMDEEditor from 'react-simplemde-editor'
+import { v4 as uuidv4 } from 'uuid';
+import './App.css'
 import 'easymde/dist/easymde.min.css'
 
 const {Content, Sider} = Layout
@@ -71,6 +72,7 @@ function App () {
     const newFiles = files.map(file => {
       if (file.id === id) {
         file.title = title
+        file.isNew = false
       }
       return file
     })
@@ -81,6 +83,21 @@ function App () {
     const keyword = event.target.value
     const newFiles = files.filter(file => file.title.includes(keyword))
     setSearchedFiles(newFiles)
+  }
+
+  const createNewFile = () => {
+    const newID = uuidv4()
+    const newFiles = [
+      ...files,
+      {
+        id: newID,
+        title: '',
+        body: '### temple',
+        createdAt: new Date().getTime(),
+        isNew: true
+      }
+    ]
+    setFiles(newFiles)
   }
 
   return (
@@ -102,6 +119,7 @@ function App () {
           onFileClick={fileClick}
           onFileDelete={deleteFile}
           onSaveEdit={updateFileName}
+          onAddFileButtonClick={createNewFile}
         />
       </Sider>
 

@@ -18,33 +18,44 @@ const FileList = (props) => {
   const escPress = useKeyPress(27)
 
   useEffect(() => {
-    if (enterPress && value !== '' && editFileId !== null) {
+    if (enterPress && value.trim() !== '' && editFileId !== null) {
       saveEditFile(editFileId, value)
     }
 
     if (escPress && editFileId !== null) {
-      cancelEditFile()
+      cancelEditFile(editFileId)
     }
   })
+
+  useEffect(() => {
+    const newFile = props.files.find(item => item.isNew)
+    if (newFile) {
+      setEditFileId(newFile.id)
+      setValue(newFile.title)
+    }
+  }, [props.files])
 
   const editFile = (id, initialValue) => {
     setEditFileId(id)
     setValue(initialValue)
   }
 
-  const cancelEditFile = () => {
+  const cancelEditFile = (id) => {
+    const editItem = props.files.find(file => file.id === id)
     setEditFileId(null)
     setValue('')
+
+    if (editItem.isNew) {
+      props.onFileDelete(editItem.id)
+    }
   }
 
   const saveEditFile = (id, savedValue) => {
-    props.onSaveEdit(id, savedValue)
-    setEditFileId(null)
-    setValue('')
-  }
-
-  const handleAddFileButtonClick = () => {
-    console.log('add new file')
+    if (savedValue.trim() !== '') {
+      props.onSaveEdit(id, savedValue)
+      setEditFileId(null)
+      setValue('')
+    }
   }
 
   const handleImportFileButtonClick = () => {
@@ -57,7 +68,7 @@ const FileList = (props) => {
     size='small'
     footer={<List.Item>
       <Button style={{width: '78px'}} size='small' type="primary"
-              onClick={() => handleAddFileButtonClick()}>
+              onClick={props.onAddFileButtonClick}>
         <PlusOutlined/> Add
       </Button>
       <Button size={'small'}
@@ -70,36 +81,38 @@ const FileList = (props) => {
         onClick={() => props.onFileClick(item.id)}
         style={{height: '40px'}}
         actions={
-          (editFileId !== item.id)
-            ? [
-              <Button style={{padding: 0}} type='link'
-                      onClick={() => editFile(item.id, item.title)}
-                      key="file-edit"><EditOutlined/></Button>,
-              <Button style={{padding: 0}} type='link'
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        props.onFileDelete(item.id)
-                      }}
-                      key="file-delete"><DeleteOutlined/></Button>]
-            : [
-              <Button style={{padding: 0}} type='link'
-                      onClick={() => cancelEditFile()}
-                      key="file-edit-cancel"><CloseOutlined/></Button>,
-              <Button style={{padding: 0}} type='link'
-                      onClick={() => saveEditFile(item.id, value)}
-                      key="file-edit-save"><CheckOutlined/></Button>]
+          (editFileId === item.id || item.isNew) ? [
+            <Button style={{padding: 0}} type='link'
+                    onClick={() => cancelEditFile(item.id)}
+                    key="file-edit-cancel"><CloseOutlined/></Button>,
+            <Button style={{padding: 0}} type='link'
+                    onClick={() => saveEditFile(item.id, value)}
+                    key="file-edit-save"><CheckOutlined/></Button>] : [
+            <Button style={{padding: 0}} type='link'
+                    onClick={() => editFile(item.id, item.title)}
+                    key="file-edit"><EditOutlined/></Button>,
+            <Button style={{padding: 0}} type='link'
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      props.onFileDelete(item.id)
+                    }}
+                    key="file-delete"><DeleteOutlined/></Button>]
         }
       >
         {
-          (editFileId !== item.id)
-            ? <Tooltip placement="rightTop" title={item.title}>
-              <Paragraph style={{margin: 0}}
-                         ellipsis>
+          (editFileId === item.id || item.isNew)
+            ? <Input
+              placeholder={'请输入文件名'}
+              defaultValue={item.title}
+              size='small'
+              onChange={(e) => {
+                setValue(e.target.value)
+              }}/>
+            : <Tooltip placement="rightTop" title={item.title}>
+              <Paragraph style={{margin: 0}} ellipsis>
                 {item.title}
               </Paragraph>
             </Tooltip>
-            : <Input defaultValue={item.title} size='small'
-                     onChange={(e) => {setValue(e.target.value)}}/>
         }
 
       </List.Item>
