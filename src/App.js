@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Input, Layout } from 'antd'
+import { Button, Input, Layout } from 'antd'
 import FileList from './components/FileList'
 import TabList from './components/TabList'
 import { flattenArr, objToArr } from './utils/helper'
@@ -8,6 +8,7 @@ import fileHelper from './utils/fileHelper'
 import { v4 as uuidv4 } from 'uuid'
 import './App.css'
 import 'easymde/dist/easymde.min.css'
+import SaveOutlined from '@ant-design/icons/lib/icons/SaveOutlined'
 
 const {join} = window.require('path')
 const {remote} = window.require('electron')
@@ -74,11 +75,12 @@ function App () {
     const modifiedFile = {...files[id], title, isNew: false}
 
     if (isNew) {
-      fileHelper.writeFile(join(savedLocation, `${title}.md`), files[id].body)
-        .then(()=>{setFiles({...files, [id]: modifiedFile})})
+      fileHelper.writeFile(join(savedLocation, `${title}.md`), files[id].body).
+        then(() => {setFiles({...files, [id]: modifiedFile})})
     } else {
-      fileHelper.renameFile(join(savedLocation, `${files[id].title}.md`), join(savedLocation, `${title}.md`))
-        .then(()=>{setFiles({...files, [id]: modifiedFile})})
+      fileHelper.renameFile(join(savedLocation, `${files[id].title}.md`),
+        join(savedLocation, `${title}.md`)).
+        then(() => {setFiles({...files, [id]: modifiedFile})})
     }
   }
 
@@ -99,6 +101,14 @@ function App () {
       isNew: true,
     }
     setFiles({...files, [newID]: newFile})
+  }
+
+  const saveCurrentFile = () => {
+    fileHelper.writeFile(join(savedLocation, `${activeFile.title}.md`),
+      activeFile.body).then(() => {
+      setUnsavedFileIDs(
+        unsavedFileIDs.filter(unsavedFileID => unsavedFileID !== activeFile.id))
+    })
   }
 
   return (
@@ -151,6 +161,10 @@ function App () {
                   minHeight: '515px',
                 }}
               />
+              <Button style={{width: '78px'}} size='small' type="primary"
+                      onClick={saveCurrentFile}>
+                <SaveOutlined/> Save
+              </Button>
             </>
           }
         </Content>

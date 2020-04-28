@@ -82,12 +82,10 @@ const FileList = ({files, onFileDelete, onSaveEdit, onAddFileButtonClick, onFile
       <List.Item
         className={'file-item'}
         onClick={() => onFileClick(item.id)}
-        style={{height: '40px'}}
         actions={
           (editFileId === item.id || item.isNew) ? [
             <Button
               className={'file-operator cancel'}
-              style={{padding: 0}}
               type='link'
               key="file-edit-cancel"
               onClick={(e) => {
@@ -98,7 +96,6 @@ const FileList = ({files, onFileDelete, onSaveEdit, onAddFileButtonClick, onFile
             </Button>,
             <Button
               className={'file-operator save'}
-              style={{padding: 0}}
               type='link'
               key="file-edit-save"
               onClick={(e) => {
@@ -109,7 +106,6 @@ const FileList = ({files, onFileDelete, onSaveEdit, onAddFileButtonClick, onFile
             </Button>] : [
             <Button
               className={'file-operator edit'}
-              style={{padding: 0}}
               type='link'
               key="file-edit"
               onClick={(e) => {
@@ -120,7 +116,6 @@ const FileList = ({files, onFileDelete, onSaveEdit, onAddFileButtonClick, onFile
             </Button>,
             <Button
               className={"file-operator delete"}
-              style={{padding: 0}}
               type='link'
               key="file-delete"
               onClick={(e) => {
