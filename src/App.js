@@ -2,11 +2,11 @@ import React, { useState } from 'react'
 import { Input, Layout } from 'antd'
 import FileList from './components/FileList'
 import TabList from './components/TabList'
+import { flattenArr, objToArr } from './utils/helper'
 import SimpleMDEEditor from 'react-simplemde-editor'
 import { v4 as uuidv4 } from 'uuid';
 import './App.css'
 import 'easymde/dist/easymde.min.css'
-import { flattenArr, objToArr } from './utils/helper'
 
 const {Content, Sider} = Layout
 const {Search} = Input

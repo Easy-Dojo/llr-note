@@ -1,0 +1,17 @@
+.file-item {
+  height: 40px;
+
+  .file-operator {
+    padding: 0;
+  }
+
+  .cancel, .edit, .save, .delete, .ant-list-item-action-split {
+    display: none;
+  }
+
+  &:hover {
+    .cancel, .edit, .save, .delete, .ant-list-item-action-split {
+      display: block;
+    }
+  }
+}

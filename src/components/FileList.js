@@ -8,6 +8,7 @@ import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import useKeyPress from '../hooks/useKeyPress'
 import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined'
 import PropTypes from 'prop-types'
+import '../styles/FileList.scss'
 
 const {Paragraph} = Typography
 
@@ -78,25 +79,55 @@ const FileList = ({files, onFileDelete, onSaveEdit, onAddFileButtonClick, onFile
     </List.Item>}
     renderItem={item => (
       <List.Item
+        className={'file-item'}
         onClick={() => onFileClick(item.id)}
         style={{height: '40px'}}
         actions={
           (editFileId === item.id || item.isNew) ? [
-            <Button style={{padding: 0}} type='link'
-                    onClick={() => cancelEditFile(item.id)}
-                    key="file-edit-cancel"><CloseOutlined/></Button>,
-            <Button style={{padding: 0}} type='link'
-                    onClick={() => saveEditFile(item.id, value)}
-                    key="file-edit-save"><CheckOutlined/></Button>] : [
-            <Button style={{padding: 0}} type='link'
-                    onClick={() => editFile(item.id, item.title)}
-                    key="file-edit"><EditOutlined/></Button>,
-            <Button style={{padding: 0}} type='link'
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onFileDelete(item.id)
-                    }}
-                    key="file-delete"><DeleteOutlined/></Button>]
+            <Button
+              className={'file-operator cancel'}
+              style={{padding: 0}}
+              type='link'
+              key="file-edit-cancel"
+              onClick={(e) => {
+                e.stopPropagation()
+                cancelEditFile(item.id)
+              }}>
+              <CloseOutlined/>
+            </Button>,
+            <Button
+              className={'file-operator save'}
+              style={{padding: 0}}
+              type='link'
+              key="file-edit-save"
+              onClick={(e) => {
+                e.stopPropagation()
+                saveEditFile(item.id, value)
+              }}>
+              <CheckOutlined/>
+            </Button>] : [
+            <Button
+              className={'file-operator edit'}
+              style={{padding: 0}}
+              type='link'
+              key="file-edit"
+              onClick={(e) => {
+                e.stopPropagation()
+                editFile(item.id, item.title)
+              }}>
+              <EditOutlined/>
+            </Button>,
+            <Button
+              className={"file-operator delete"}
+              style={{padding: 0}}
+              type='link'
+              key="file-delete"
+              onClick={(e) => {
+                e.stopPropagation()
+                onFileDelete(item.id)
+              }}>
+              <DeleteOutlined/>
+            </Button>]
         }
       >
         {
@@ -105,6 +136,7 @@ const FileList = ({files, onFileDelete, onSaveEdit, onAddFileButtonClick, onFile
               placeholder={'请输入文件名'}
               defaultValue={item.title}
               size='small'
+              onClick={(e) => {e.stopPropagation()}}
               onChange={(e) => {
                 setValue(e.target.value)
               }}/>
