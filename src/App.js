@@ -42,6 +42,13 @@ function App () {
 
   const fileClick = (fileID) => {
     setActiveFileID(fileID)
+    const currentFile = files[fileID]
+    if (!currentFile.isLoaded) {
+      fileHelper.readFile(currentFile.path).then(value => {
+        const newFile = {...currentFile, body: value, isLoaded: true}
+        setFiles({...files, [fileID]: newFile})
+      })
+    }
     setOpenedFileIDs(Array.from(new Set([...openedFileIDs, fileID])))
   }
 
@@ -70,17 +77,17 @@ function App () {
   }
 
   const deleteFile = (id) => {
-    if(files[id].path) {
-      fileHelper.deleteFile(files[id].path).then(()=>{
-        delete files[id]
-        setFiles(files)
-        saveFilesToStore(files)
+    if (files[id].path) {
+      fileHelper.deleteFile(files[id].path).then(() => {
         tabClose(id)
+        const {[id]: value, ...afterDelete} = files
+        setFiles(afterDelete)
+        saveFilesToStore(afterDelete)
       })
-    }else {
-      delete files[id]
-      setFiles(files)
+    } else {
       tabClose(id)
+      const {[id]: value, ...afterDelete} = files
+      setFiles(afterDelete)
     }
   }
 
