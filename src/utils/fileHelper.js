@@ -1,4 +1,4 @@
-const fs = require('fs').promises
+const fs = window.require('fs').promises
 
 const fileHelper = {
   readFile: (path) => {
@@ -14,6 +14,8 @@ const fileHelper = {
     return fs.unlink(path)
   },
 }
+
+export default fileHelper
 
 
 

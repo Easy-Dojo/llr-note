@@ -4,17 +4,21 @@ import FileList from './components/FileList'
 import TabList from './components/TabList'
 import { flattenArr, objToArr } from './utils/helper'
 import SimpleMDEEditor from 'react-simplemde-editor'
-import { v4 as uuidv4 } from 'uuid';
+import fileHelper from './utils/fileHelper'
+import { v4 as uuidv4 } from 'uuid'
 import './App.css'
 import 'easymde/dist/easymde.min.css'
+
+const {join} = window.require('path')
+const {remote} = window.require('electron')
 
 const {Content, Sider} = Layout
 const {Search} = Input
 
 const defaultFiles = [
-  {id: "1", title: 'Tab 1 is a test ba ss ', body: '### Content of Tab Pane 1'},
-  {id: "2", title: 'Tab 2', body: 'Content of Tab Pane 2'},
-  {id: "3", title: 'Tab 3', body: 'Content of Tab Pane 3'},
+  {id: '1', title: 'Tab 1 is a test ba ss ', body: '### Content of Tab Pane 1'},
+  {id: '2', title: 'Tab 2', body: 'Content of Tab Pane 2'},
+  {id: '3', title: 'Tab 3', body: 'Content of Tab Pane 3'},
 ]
 
 function App () {
@@ -24,6 +28,7 @@ function App () {
   const [unsavedFileIDs, setUnsavedFileIDs] = useState([])
   const [searchedFiles, setSearchedFiles] = useState([])
   const filesArry = objToArr(files)
+  const savedLocation = remote.app.getPath('documents')
 
   const activeFile = files[activeFileID]
   const openedFiles = openedFileIDs.map(openedID => files[openedID])
@@ -65,9 +70,16 @@ function App () {
     tabClose(id)
   }
 
-  const updateFileName = (id, title) => {
+  const updateFileName = (id, title, isNew) => {
     const modifiedFile = {...files[id], title, isNew: false}
-    setFiles({...files, [id]: modifiedFile})
+
+    if (isNew) {
+      fileHelper.writeFile(join(savedLocation, `${title}.md`), files[id].body)
+        .then(()=>{setFiles({...files, [id]: modifiedFile})})
+    } else {
+      fileHelper.renameFile(join(savedLocation, `${files[id].title}.md`), join(savedLocation, `${title}.md`))
+        .then(()=>{setFiles({...files, [id]: modifiedFile})})
+    }
   }
 
   const fileSearch = (event) => {
@@ -84,7 +96,7 @@ function App () {
       title: '',
       body: '### temple',
       createdAt: new Date().getTime(),
-      isNew: true
+      isNew: true,
     }
     setFiles({...files, [newID]: newFile})
   }
