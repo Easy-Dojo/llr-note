@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Button, Input, Layout } from 'antd'
 import FileList from './components/FileList'
 import TabList from './components/TabList'
-import { objToArr } from './utils/helper'
+import { flattenArr, objToArr } from './utils/helper'
 import SimpleMDEEditor from 'react-simplemde-editor'
 import fileHelper from './utils/fileHelper'
 import { v4 as uuidv4 } from 'uuid'
@@ -10,7 +10,7 @@ import './App.css'
 import 'easymde/dist/easymde.min.css'
 import SaveOutlined from '@ant-design/icons/lib/icons/SaveOutlined'
 
-const {join} = window.require('path')
+const {join, basename, extname,dirname} = window.require('path')
 const {remote} = window.require('electron')
 const Store = window.require('electron-store')
 
@@ -92,7 +92,9 @@ function App () {
   }
 
   const updateFileName = (id, title, isNew) => {
-    const newPath = join(savedLocation, `${title}.md`)
+    const newPath = isNew
+      ? join(savedLocation, `${title}.md`)
+      : join(dirname(files[id].path), `${title}.md`)
     const modifiedFile = {...files[id], title, isNew: false, path: newPath}
     const newFiles = {...files, [id]: modifiedFile}
 
@@ -102,7 +104,7 @@ function App () {
         saveFilesToStore(newFiles)
       })
     } else {
-      const oldPath = join(savedLocation, `${files[id].title}.md`)
+      const oldPath = files[id].path
       fileHelper.renameFile(oldPath, newPath).then(() => {
         setFiles(newFiles)
         saveFilesToStore(newFiles)
@@ -130,10 +132,47 @@ function App () {
   }
 
   const saveCurrentFile = () => {
-    fileHelper.writeFile(join(savedLocation, `${activeFile.title}.md`),
-      activeFile.body).then(() => {
+    fileHelper.writeFile(activeFile.path, activeFile.body).then(() => {
       setUnsavedFileIDs(
         unsavedFileIDs.filter(unsavedFileID => unsavedFileID !== activeFile.id))
+    })
+  }
+
+  const importFiles = () => {
+    remote.dialog.showOpenDialog({
+      title: '选择导入的Markdown文件',
+      properties: ['openFile', 'multiSelections'],
+      filters: [{name: 'Markdown Files', extensions: ['md']}],
+    }).then(result => {
+      const filteredPaths = result.filePaths.filter(path => {
+        const alreadyAdded = Object.values(files).
+          find(file => file.path === path)
+        return !alreadyAdded
+      })
+
+      const importedFilesArr = filteredPaths.map(path => ({
+        id: uuidv4(),
+        title: basename(path, extname(path)),
+        path,
+      }))
+
+      const newFiles = {...files, ...flattenArr(importedFilesArr)}
+      setFiles(newFiles)
+      saveFilesToStore(newFiles)
+
+      if (importedFilesArr.length > 0) {
+        remote.dialog.showMessageBox({
+          type: 'info',
+          title: '导入成功',
+          message: `成功导入了${importedFilesArr.length}个文件`,
+        })
+      }
+    }).catch(err => {
+      remote.dialog.showMessageBox({
+        type: 'error',
+        title: '导入失败',
+        message: `成功导入文件失败`,
+      })
     })
   }
 
@@ -153,6 +192,7 @@ function App () {
         />
         <FileList
           files={fileListArr}
+          onImportFiles={importFiles}
           onFileClick={fileClick}
           onFileDelete={deleteFile}
           onSaveEdit={updateFileName}

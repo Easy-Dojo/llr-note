@@ -12,7 +12,7 @@ import '../styles/FileList.scss'
 
 const {Paragraph} = Typography
 
-const FileList = ({files, onFileDelete, onSaveEdit, onAddFileButtonClick, onFileClick}) => {
+const FileList = ({files,onImportFiles, onFileDelete, onSaveEdit, onAddFileButtonClick, onFileClick}) => {
   const [editFileId, setEditFileId] = useState(null)
   const [value, setValue] = useState('')
   const enterPress = useKeyPress(13)
@@ -60,10 +60,6 @@ const FileList = ({files, onFileDelete, onSaveEdit, onAddFileButtonClick, onFile
     }
   }
 
-  const handleImportFileButtonClick = () => {
-    console.log('import file')
-  }
-
   return <List
     style={{borderTop: '1px solid #f0f0f0'}}
     dataSource={files}
@@ -74,7 +70,7 @@ const FileList = ({files, onFileDelete, onSaveEdit, onAddFileButtonClick, onFile
         <PlusOutlined/> Add
       </Button>
       <Button size={'small'}
-              onClick={() => handleImportFileButtonClick()}>
+              onClick={onImportFiles}>
         <DownloadOutlined/> Import
       </Button>
     </List.Item>}
