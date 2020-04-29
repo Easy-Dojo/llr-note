@@ -9,9 +9,8 @@ import useKeyPress from '../hooks/useKeyPress'
 import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined'
 import PropTypes from 'prop-types'
 import '../styles/FileList.scss'
+import useContextMenu from '../hooks/useContextMenu'
 
-const {remote} = window.require('electron')
-const {Menu, MenuItem} = remote
 const {Paragraph} = Typography
 
 const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButtonClick, onFileClick}) => {
@@ -38,35 +37,23 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
     }
   }, [files])
 
-  useEffect(()=>{
-    const menu = new Menu()
-    menu.append((new MenuItem({
+  useContextMenu([
+    {
       label: '打开',
-      click: ()=>{
+      click: () => {
         console.log('click打开')
-      }
-    })))
-    menu.append((new MenuItem({
+      },
+    }, {
       label: '重命名',
-      click: ()=>{
+      click: () => {
         console.log('click重命名')
-      }
-    })))
-    menu.append((new MenuItem({
+      },
+    }, {
       label: '删除',
-      click: ()=>{
+      click: () => {
         console.log('click删除')
-      }
-    })))
-
-    const handleContextMenu = (e)=>{
-      menu.popup({window: remote.getCurrentWindow()})
-    }
-    window.addEventListener('contextmenu',handleContextMenu)
-    return ()=>{
-      window.removeEventListener('contextmenu',handleContextMenu)
-    }
-  })
+      },
+    }])
 
   const editFile = (id, initialValue) => {
     setEditFileId(id)
