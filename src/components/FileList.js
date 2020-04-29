@@ -10,9 +10,11 @@ import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined'
 import PropTypes from 'prop-types'
 import '../styles/FileList.scss'
 
+const {remote} = window.require('electron')
+const {Menu, MenuItem} = remote
 const {Paragraph} = Typography
 
-const FileList = ({files,onImportFiles, onFileDelete, onSaveEdit, onAddFileButtonClick, onFileClick}) => {
+const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButtonClick, onFileClick}) => {
   const [editFileId, setEditFileId] = useState(null)
   const [value, setValue] = useState('')
   const enterPress = useKeyPress(13)
@@ -35,6 +37,36 @@ const FileList = ({files,onImportFiles, onFileDelete, onSaveEdit, onAddFileButto
       setValue(newFile.title)
     }
   }, [files])
+
+  useEffect(()=>{
+    const menu = new Menu()
+    menu.append((new MenuItem({
+      label: '打开',
+      click: ()=>{
+        console.log('click打开')
+      }
+    })))
+    menu.append((new MenuItem({
+      label: '重命名',
+      click: ()=>{
+        console.log('click重命名')
+      }
+    })))
+    menu.append((new MenuItem({
+      label: '删除',
+      click: ()=>{
+        console.log('click删除')
+      }
+    })))
+
+    const handleContextMenu = (e)=>{
+      menu.popup({window: remote.getCurrentWindow()})
+    }
+    window.addEventListener('contextmenu',handleContextMenu)
+    return ()=>{
+      window.removeEventListener('contextmenu',handleContextMenu)
+    }
+  })
 
   const editFile = (id, initialValue) => {
     setEditFileId(id)
@@ -111,7 +143,7 @@ const FileList = ({files,onImportFiles, onFileDelete, onSaveEdit, onAddFileButto
               <EditOutlined/>
             </Button>,
             <Button
-              className={"file-operator delete"}
+              className={'file-operator delete'}
               type='link'
               key="file-delete"
               onClick={(e) => {
