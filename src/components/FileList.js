@@ -10,6 +10,7 @@ import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined'
 import PropTypes from 'prop-types'
 import '../styles/FileList.scss'
 import useContextMenu from '../hooks/useContextMenu'
+import { getParentNode } from '../utils/helper'
 
 const {Paragraph} = Typography
 
@@ -41,19 +42,12 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
     {
       label: '打开',
       click: () => {
-        console.log('click打开', clickedElm)
+        const clickedFileItem = getParentNode(clickedElm.current, 'file-item')
+        if (clickedFileItem) {
+          onFileClick(clickedFileItem.dataset.id)
+        }
       },
-    }, {
-      label: '重命名',
-      click: () => {
-        console.log('click重命名')
-      },
-    }, {
-      label: '删除',
-      click: () => {
-        console.log('click删除')
-      },
-    }], '.file-list')
+    }], '.ant-list-items', [files])
 
   const editFile = (id, initialValue) => {
     setEditFileId(id)
@@ -95,6 +89,8 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
     </List.Item>}
     renderItem={item => (
       <List.Item
+        data-id={item.id}
+        data-title={item.title}
         className={'file-item'}
         onClick={() => onFileClick(item.id)}
         actions={
