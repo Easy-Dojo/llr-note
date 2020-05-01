@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button, Input, List, Tooltip, Typography } from 'antd'
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined'
@@ -19,6 +19,7 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
   const [value, setValue] = useState('')
   const enterPress = useKeyPress(13)
   const escPress = useKeyPress(27)
+  const textInput = useRef(null);
 
   useEffect(() => {
     if (enterPress && value.trim() !== '' && editFileId !== null) {
@@ -35,6 +36,9 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
     if (newFile) {
       setEditFileId(newFile.id)
       setValue(newFile.title)
+      if (textInput.current) {
+        textInput.current.focus()
+      }
     }
   }, [files])
 
@@ -152,6 +156,7 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
         {
           (editFileId === item.id || item.isNew)
             ? <Input
+              ref={textInput}
               placeholder={'请输入文件名'}
               defaultValue={item.title}
               size='small'
