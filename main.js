@@ -1,5 +1,6 @@
-const {app, BrowserWindow, ipcMain} = require('electron')
+const {app, BrowserWindow, Menu} = require('electron')
 const isDev = require('electron-is-dev')
+const menuTemplate = require('./src/menuTemplate')
 
 class AppWindow extends BrowserWindow {
   constructor (config, urlLocation) {
@@ -29,9 +30,9 @@ function main () {
   const mainWidow = new AppWindow(null, urlLocation)
   console.log('打开窗口======》名称：' + mainWidow.getTitle())
 
-  ipcMain.on('message', ((event) => {
-    event.reply('reply', 'reply from main process')
-  }))
+  // set up menu
+  const menu = Menu.buildFromTemplate(menuTemplate)
+  Menu.setApplicationMenu(menu)
 }
 
 app.on('ready', main)
