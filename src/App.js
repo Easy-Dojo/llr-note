@@ -9,8 +9,9 @@ import { v4 as uuidv4 } from 'uuid'
 import './App.css'
 import 'easymde/dist/easymde.min.css'
 import SaveOutlined from '@ant-design/icons/lib/icons/SaveOutlined'
+import { MDContentTemp } from './utils/constant'
 
-const {join, basename, extname,dirname} = window.require('path')
+const {join, basename, extname, dirname} = window.require('path')
 const {remote} = window.require('electron')
 const Store = window.require('electron-store')
 
@@ -120,13 +121,14 @@ function App () {
     setSearchedFiles(newFiles)
   }
 
-  const createNewFile = () => {
+  // TODO： 相同文件名不能提交
+  const createNewFile = (defaultContent = MDContentTemp.default) => {
     const newID = uuidv4()
 
     const newFile = {
       id: newID,
       title: '',
-      body: '### temple',
+      body: defaultContent,
       createdAt: new Date().getTime(),
       isNew: true,
     }

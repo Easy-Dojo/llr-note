@@ -11,6 +11,7 @@ import PropTypes from 'prop-types'
 import '../styles/FileList.scss'
 import useContextMenu from '../hooks/useContextMenu'
 import { getParentNode } from '../utils/helper'
+import { MDContentTemp } from '../utils/constant'
 
 const {Paragraph} = Typography
 
@@ -58,6 +59,18 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
       label: '默认',
       click: () => {
         onAddFileButtonClick()
+      },
+    },
+    {
+      label: 'Story Card',
+      click: () => {
+        onAddFileButtonClick(MDContentTemp.story)
+      },
+    },
+    {
+      label: 'TB Plan',
+      click: () => {
+        onAddFileButtonClick(MDContentTemp.tbPlan)
       },
     }], '.add-file', [])
 
