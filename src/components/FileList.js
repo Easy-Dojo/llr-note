@@ -37,11 +37,11 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
     }
   }, [files])
 
-  useContextMenu([
+  const clickedElm = useContextMenu([
     {
       label: '打开',
       click: () => {
-        console.log('click打开')
+        console.log('click打开', clickedElm)
       },
     }, {
       label: '重命名',
@@ -53,7 +53,7 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
       click: () => {
         console.log('click删除')
       },
-    }])
+    }], '.file-list')
 
   const editFile = (id, initialValue) => {
     setEditFileId(id)
@@ -80,7 +80,7 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
   }
 
   return <List
-    style={{borderTop: '1px solid #f0f0f0'}}
+    className={'file-list'}
     dataSource={files}
     size='small'
     footer={<List.Item>

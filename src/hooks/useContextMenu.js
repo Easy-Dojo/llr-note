@@ -1,9 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 const {remote} = window.require('electron')
 const {Menu, MenuItem} = remote
 
-const useContextMenu = (itemArr) => {
+const useContextMenu = (itemArr, targetSelector) => {
+  const clickedElement = useRef(null)
+
   useEffect(() => {
     const menu = new Menu()
     itemArr.forEach(item => {
@@ -11,13 +13,18 @@ const useContextMenu = (itemArr) => {
     })
 
     const handleContextMenu = (e) => {
-      menu.popup({window: remote.getCurrentWindow()})
+      if(document.querySelector(targetSelector).contains(e.target)) {
+        menu.popup({window: remote.getCurrentWindow()})
+        clickedElement.current = e.target
+      }
     }
     window.addEventListener('contextmenu', handleContextMenu)
     return () => {
       window.removeEventListener('contextmenu', handleContextMenu)
     }
   }, [])
+
+  return clickedElement
 }
 
 export default useContextMenu
