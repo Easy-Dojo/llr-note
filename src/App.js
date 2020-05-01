@@ -41,15 +41,17 @@ function App () {
   const fileListArr = (searchedFiles.length > 0) ? searchedFiles : filesArry
 
   const fileClick = (fileID) => {
-    setActiveFileID(fileID)
     const currentFile = files[fileID]
-    if (!currentFile.isLoaded) {
-      fileHelper.readFile(currentFile.path).then(value => {
-        const newFile = {...currentFile, body: value, isLoaded: true}
-        setFiles({...files, [fileID]: newFile})
-      })
+    if (!currentFile.isNew) {
+      setActiveFileID(fileID)
+      if (!currentFile.isLoaded) {
+        fileHelper.readFile(currentFile.path).then(value => {
+          const newFile = {...currentFile, body: value, isLoaded: true}
+          setFiles({...files, [fileID]: newFile})
+        })
+      }
+      setOpenedFileIDs(Array.from(new Set([...openedFileIDs, fileID])))
     }
-    setOpenedFileIDs(Array.from(new Set([...openedFileIDs, fileID])))
   }
 
   const tabClick = (fileID) => {

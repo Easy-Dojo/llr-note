@@ -49,6 +49,14 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
       },
     }], '.ant-list-items', [files])
 
+  useContextMenu([
+    {
+      label: '默认',
+      click: () => {
+        onAddFileButtonClick()
+      },
+    }], '.add-file', [])
+
   const editFile = (id, initialValue) => {
     setEditFileId(id)
     setValue(initialValue)
@@ -78,8 +86,12 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
     dataSource={files}
     size='small'
     footer={<List.Item>
-      <Button style={{width: '78px'}} size='small' type="primary"
-              onClick={onAddFileButtonClick}>
+      <Button
+        className={'add-file'}
+        style={{width: '78px'}}
+        size='small'
+        type="primary"
+        onClick={onAddFileButtonClick}>
         <PlusOutlined/> Add
       </Button>
       <Button size={'small'}
