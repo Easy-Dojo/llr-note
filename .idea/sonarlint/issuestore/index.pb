@@ -47,3 +47,13 @@ J
 src/styles/TabList.css.map,c/e/ce681af1d41afd6d4558ea26f5b4e75af73f3d27
 C
 src/utils/helper.js,c/7/c7be17c6e8d5f1bb8a93883f0efa48bf3abfacc9
+G
+src/utils/fileHelper.js,0/8/0893dfdd80794f486930ee08ecb835e087316313
+H
+src/styles/FileList.scss,c/3/c363f3b44e17f108f6c080dadf6fe7676a7655a6
+K
+src/hooks/useContextMenu.js,6/a/6a8c6929b50946d371f8ce57c7e94150d61fe3b9
+C
+src/menuTemplate.js,0/5/05961fb610fd39732ab493e0ba5f085ba5301411
+E
+src/utils/constant.js,3/9/39bc57628675f5b4cb39f868242804ce2cfa0121
