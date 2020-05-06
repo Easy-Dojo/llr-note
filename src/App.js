@@ -18,6 +18,7 @@ const Store = window.require('electron-store')
 const {Content, Sider} = Layout
 const {Search} = Input
 
+//TODO 初次加载更新目录下被手动删除的文件
 const fileStore = new Store({'name': 'Files Data'})
 const saveFilesToStore = (files) => {
   const filesStoreObj = objToArr(files).reduce((result, file) => {
