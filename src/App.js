@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Input, Layout } from 'antd'
+import { Input, Layout } from 'antd'
 import FileList from './components/FileList'
 import TabList from './components/TabList'
 import { flattenArr, objToArr } from './utils/helper'
@@ -8,12 +8,11 @@ import fileHelper from './utils/fileHelper'
 import { v4 as uuidv4 } from 'uuid'
 import './App.css'
 import 'easymde/dist/easymde.min.css'
-import SaveOutlined from '@ant-design/icons/lib/icons/SaveOutlined'
 import { MDContentTemp } from './utils/constant'
 import useIpcRenderer from './hooks/useIpcRenderer'
 
 const {join, basename, extname, dirname} = window.require('path')
-const {remote, ipcRenderer} = window.require('electron')
+const {remote} = window.require('electron')
 const Store = window.require('electron-store')
 
 const {Content, Sider} = Layout
@@ -154,8 +153,8 @@ function App () {
       filters: [{name: 'Markdown Files', extensions: ['md']}],
     }).then(result => {
       const filteredPaths = result.filePaths.filter(path => {
-        const alreadyAdded = Object.values(files).
-          find(file => file.path === path)
+        const alreadyAdded = Object.values(files)
+          .find(file => file.path === path)
         return !alreadyAdded
       })
 
