@@ -17,12 +17,6 @@ let template = [
           browserWindow.webContents.send('save-edit-file')
         },
       }, {
-        label: '搜索',
-        accelerator: 'CmdOrCtrl+F',
-        click: (menuItem, browserWindow, event) => {
-          browserWindow.webContents.send('search-file')
-        },
-      }, {
         label: '导入',
         accelerator: 'CmdOrCtrl+O',
         click: (menuItem, browserWindow, event) => {

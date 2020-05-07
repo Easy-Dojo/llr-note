@@ -1,25 +1,25 @@
 .tab-list-component {
   .close-icon {
-    visibility: hidden;
+    visibility: visible;
   }
 
   .tab-item {
     padding-right: 0;
   }
 
-  .tab-item:hover {
+  .tab-item.active {
     .close-icon {
-      visibility: visible;
+      display: none;
     }
 
     .unsaved-icon {
-      display: none;
+      visibility: visible;
     }
   }
 
-  .tab-item.active {
+  .tab-item:hover {
     .close-icon {
-      visibility: visible;
+      display: inline-block;
     }
 
     .unsaved-icon {

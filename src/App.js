@@ -10,9 +10,10 @@ import './App.css'
 import 'easymde/dist/easymde.min.css'
 import SaveOutlined from '@ant-design/icons/lib/icons/SaveOutlined'
 import { MDContentTemp } from './utils/constant'
+import useIpcRenderer from './hooks/useIpcRenderer'
 
 const {join, basename, extname, dirname} = window.require('path')
-const {remote} = window.require('electron')
+const {remote, ipcRenderer} = window.require('electron')
 const Store = window.require('electron-store')
 
 const {Content, Sider} = Layout
@@ -72,11 +73,13 @@ function App () {
   }
 
   const fileChange = (id, value) => {
-    const newFile = {...files[id], body: value}
-    setFiles({...files, [id]: newFile})
+    if (value !== files[id].body) {
+      const newFile = {...files[id], body: value}
+      setFiles({...files, [id]: newFile})
 
-    if (!unsavedFileIDs.includes(id)) {
-      setUnsavedFileIDs([...unsavedFileIDs, id])
+      if (!unsavedFileIDs.includes(id)) {
+        setUnsavedFileIDs([...unsavedFileIDs, id])
+      }
     }
   }
 
@@ -123,9 +126,10 @@ function App () {
   }
 
   // TODO： 相同文件名不能提交
-  const createNewFile = (defaultContent = MDContentTemp.default) => {
+  const createNewFile = (defaultContent) => {
     const newID = uuidv4()
-
+    console.log('llll')
+    console.log(defaultContent)
     const newFile = {
       id: newID,
       title: '',
@@ -181,6 +185,12 @@ function App () {
     })
   }
 
+  useIpcRenderer({
+    'create-new-file': () => createNewFile(MDContentTemp.default),
+    'import-file': importFiles,
+    'save-edit-file': saveCurrentFile,
+  })
+
   return (
     <Layout>
       <Sider
@@ -232,10 +242,6 @@ function App () {
                   minHeight: '515px',
                 }}
               />
-              <Button style={{width: '78px'}} size='small' type="primary"
-                      onClick={saveCurrentFile}>
-                <SaveOutlined/> Save
-              </Button>
             </>
           }
         </Content>

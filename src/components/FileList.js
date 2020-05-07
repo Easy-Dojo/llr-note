@@ -20,7 +20,7 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
   const [value, setValue] = useState('')
   const enterPress = useKeyPress(13)
   const escPress = useKeyPress(27)
-  const textInput = useRef(null);
+  const textInput = useRef(null)
 
   useEffect(() => {
     if (enterPress && value.trim() !== '' && editFileId !== null) {
@@ -58,7 +58,7 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
     {
       label: '默认',
       click: () => {
-        onAddFileButtonClick()
+        onAddFileButtonClick(MDContentTemp.default)
       },
     },
     {
@@ -108,7 +108,7 @@ const FileList = ({files, onImportFiles, onFileDelete, onSaveEdit, onAddFileButt
         style={{width: '78px'}}
         size='small'
         type="primary"
-        onClick={onAddFileButtonClick}>
+        onClick={() => onAddFileButtonClick(MDContentTemp.default)}>
         <PlusOutlined/> Add
       </Button>
       <Button size={'small'}
