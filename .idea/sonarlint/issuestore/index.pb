@@ -57,3 +57,9 @@ C
 src/menuTemplate.js,0/5/05961fb610fd39732ab493e0ba5f085ba5301411
 E
 src/utils/constant.js,3/9/39bc57628675f5b4cb39f868242804ce2cfa0121
+K
+src/hooks/useIpcRenderer.js,3/d/3d0907787cd042772e2cbf4f3896430aea694bc8
+J
+src/settings/settings.html,f/9/f9c6c359a714df42397c638ecac73183e7de5cbd
+@
+src/AppWindow.js,e/9/e9a3b8a14dd4a138865267f7237e2d6e338e3e71
