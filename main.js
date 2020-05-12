@@ -24,6 +24,7 @@ app.on('ready', function () {
       parent: mainWidow
     }
     const settingsFileLocation = `file://${path.join(__dirname, './settings/settings.html')}`
+    console.log(settingsFileLocation)
     let settingWindow = new AppWindow(settingsWindowConfig, settingsFileLocation)
 
   })

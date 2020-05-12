@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-4">
+        <h5>设置</h5>
+        <form id="settings-form">
+            <div class="form-group">
+                <label for="saved-file-location">选择文件位置</label>
+                <div class="input-group mb-2">
+                    <input disabled type="text" id="saved-file-location" class="form-control">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="button" id="select-new-location">
+                            选择新的位置
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <button type="submit" class="btn btn-primary">保存</button>
+        </form>
+    </div>
+    <script>
+        require('./setting.js')
+    </script>
+</body>
+</html>
