@@ -4,8 +4,6 @@ const settingsStore = new Store({name: 'Settings'})
 
 const qiniuIsConfigured = ['accessKey', 'secretKey', 'bucketName'].every(
   key => !!settingsStore.get(key))
-let enableAutoSync = settingsStore.get('enableAutoSync')
-
 let template = [
   {
     label: '文件',
@@ -76,15 +74,16 @@ let template = [
         label: '设置',
         accelerator: 'CmdOrCtrl+,',
         click: () => {
-          ipcMain.emit('open-setting-window')
+          ipcMain.emit('open-settings-window')
         },
       }, {
         label: '自动同步',
         type: 'checkbox',
         enabled: qiniuIsConfigured,
-        checked: enableAutoSync,
+        checked: settingsStore.get('enableAutoSync'),
         click: () => {
-          settingsStore.set('enableAutoSync', !enableAutoSync)
+          settingsStore.set('enableAutoSync', !settingsStore.get(
+            'enableAutoSync'))
         },
       }, {
         label: '全部同步至云端',

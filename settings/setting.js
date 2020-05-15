@@ -1,4 +1,4 @@
-const {remote} = require('electron')
+const {remote, ipcRenderer} = require('electron')
 const Store = require('electron-store')
 const settingsStore = new Store({name: 'Settings'})
 const qiniuConfigArr = ['#savedFileLocation','#accessKey', '#secretKey', '#bucketName']
@@ -38,6 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
         settingsStore.set(id, value ? value : '')
       }
     })
+    // send event back to main to enable cloud sync menu
+    ipcRenderer.send('config-is-saved')
     remote.getCurrentWindow().close()
   })
 
