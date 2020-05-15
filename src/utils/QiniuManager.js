@@ -37,6 +37,31 @@ class QiniuManager {
     }))
   }
 
+  getBucketDomain () {
+    const reqURL = `http://api.qiniu.com/v6/domain/list?tbl=${this.bucket}`
+    const digest = qiniu.util.generateAccessToken(this.mac, reqURL)
+    return new Promise(((resolve, reject) => {
+      qiniu.rpc.postWithoutForm(reqURL, digest,
+        this._handleCallback(resolve, reject))
+    }))
+  }
+
+  generateDownloadLink (key) {
+    const domainPromise = this.publicBuketDomain
+      ? Promise.resolve([this.publicBuketDomain])
+      : this.getBucketDomain()
+    return domainPromise.then(data=>{
+      if (Array.isArray(data) && data.length > 0) {
+        const  pattern = /^https?/
+        this.publicBuketDomain = pattern.test(data[0]) ? data[0] : `http://${data[0]}`
+        return this.bucketManager.publicDownloadUrl(this.publicBuketDomain, key)
+      } else {
+        throw Error("域名未找到")
+      }
+    })
+
+  }
+
   _handleCallback (resolve, reject) {
     return (respErr, respBody, respInfo) => {
       if (respErr) {
