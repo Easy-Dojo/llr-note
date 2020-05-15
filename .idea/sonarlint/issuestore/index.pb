@@ -59,7 +59,13 @@ E
 src/utils/constant.js,3/9/39bc57628675f5b4cb39f868242804ce2cfa0121
 K
 src/hooks/useIpcRenderer.js,3/d/3d0907787cd042772e2cbf4f3896430aea694bc8
-J
-src/settings/settings.html,f/9/f9c6c359a714df42397c638ecac73183e7de5cbd
 @
 src/AppWindow.js,e/9/e9a3b8a14dd4a138865267f7237e2d6e338e3e71
+C
+settings/setting.js,6/6/663a6cc7a122e5326a485f04646770f996e40f33
+F
+settings/settings.html,d/2/d234e26d40f3ffe716c7180c49df1748ec33e1a2
+7
+test.js,2/d/2d408aaa5a340d732402a346a7f915ed8a3d8a04
+I
+src/utils/QiniuManager.js,3/e/3e1f7dd190834914b02ce85199eb37020dff4086

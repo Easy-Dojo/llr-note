@@ -26,7 +26,7 @@ app.on('ready', function () {
     const settingsFileLocation = `file://${path.join(__dirname, './settings/settings.html')}`
     console.log(settingsFileLocation)
     let settingWindow = new AppWindow(settingsWindowConfig, settingsFileLocation)
-
+    settingWindow.removeMenu()
   })
 
   // set up menu
