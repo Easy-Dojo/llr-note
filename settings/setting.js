@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     qiniuConfigArr.forEach(selector=>{
       if ($(selector)) {
         let {id, value} = $(selector)
-        settingsStore.set(id, value)
+        settingsStore.set(id, value ? value : '')
       }
     })
     remote.getCurrentWindow().close()

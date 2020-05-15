@@ -1,4 +1,10 @@
 const {app, shell, ipcMain} = require('electron')
+const Store = require('electron-store')
+const settingsStore = new Store({name: 'Settings'})
+
+const qiniuIsConfigured = ['accessKey', 'secretKey', 'bucketName'].every(
+  key => !!settingsStore.get(key))
+let enableAutoSync = settingsStore.get('enableAutoSync')
 
 let template = [
   {
@@ -62,6 +68,33 @@ let template = [
         role: 'selectall',
       },
     ],
+  },
+  {
+    label: '云同步',
+    submenu: [
+      {
+        label: '设置',
+        accelerator: 'CmdOrCtrl+,',
+        click: () => {
+          ipcMain.emit('open-setting-window')
+        },
+      }, {
+        label: '自动同步',
+        type: 'checkbox',
+        enabled: qiniuIsConfigured,
+        checked: enableAutoSync,
+        click: () => {
+          settingsStore.set('enableAutoSync', !enableAutoSync)
+        },
+      }, {
+        label: '全部同步至云端',
+        enabled: qiniuIsConfigured,
+
+      }, {
+        label: '从云端下载到本地',
+        enabled: qiniuIsConfigured,
+
+      }],
   },
   {
     label: '视图',
@@ -200,7 +233,7 @@ if (process.platform === 'darwin') {
     click: () => {
       ipcMain.emit('open-settings-window')
     },
-  },)
+  })
 }
 
 module.exports = template
