@@ -1,10 +1,18 @@
 const AppWindow = require('./src/AppWindow')
-const {app, Menu, ipcMain} = require('electron')
+const {app, Menu, ipcMain, dialog} = require('electron')
 const isDev = require('electron-is-dev')
 const path = require('path')
 const menuTemplate = require('./src/menuTemplate')
 const Store = require('electron-store')
 const settingsStore = new Store({name: 'Settings'})
+const QiniuManager = require('./src/utils/QiniuManager')
+
+const createCloudManager = ()=>{
+    const accessKey = settingsStore.get('accessKey')
+    const secretKey = settingsStore.get('secretKey')
+    const bucketName = settingsStore.get('bucketName')
+    return new QiniuManager(accessKey, secretKey, bucketName)
+}
 
 app.on('ready', function () {
   require('devtron').install()
@@ -34,6 +42,15 @@ app.on('ready', function () {
     let settingWindow = new AppWindow(settingsWindowConfig,
       settingsFileLocation)
     settingWindow.removeMenu()
+  })
+
+  ipcMain.on('upload-file', (event,args)=>{
+    const manager = createCloudManager()
+    manager.uploadFile(args.key, args.path)
+    .then(res=>{console.log('上传成功', res)})
+    .catch(()=>{
+      dialog.showErrorBox('同步失败','请检查云同步设置')
+    })
   })
 
   ipcMain.on('config-is-saved', () => {

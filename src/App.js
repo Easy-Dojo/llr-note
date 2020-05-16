@@ -12,7 +12,7 @@ import { MDContentTemp } from './utils/constant'
 import useIpcRenderer from './hooks/useIpcRenderer'
 
 const {join, basename, extname, dirname} = window.require('path')
-const {remote} = window.require('electron')
+const {remote, ipcRenderer} = window.require('electron')
 const Store = window.require('electron-store')
 
 const {Content, Sider} = Layout
@@ -20,7 +20,9 @@ const {Search} = Input
 
 //TODO 初次加载更新目录下被手动删除的文件
 const fileStore = new Store({name: 'Files Data'})
-const settingStore = new Store({name: 'Settings'})
+const settingsStore = new Store({name: 'Settings'})
+const getAutoSync = ()=>['accessKey', 'secretKey', 'bucketName', 'enableAutoSync'].every(
+  key => !!settingsStore.get(key))
 
 const saveFilesToStore = (files) => {
   const filesStoreObj = objToArr(files).reduce((result, file) => {
@@ -38,7 +40,7 @@ function App () {
   const [unsavedFileIDs, setUnsavedFileIDs] = useState([])
   const [searchedFiles, setSearchedFiles] = useState([])
   const filesArry = objToArr(files)
-  const savedLocation = settingStore.get('savedFileLocation') || remote.app.getPath('documents')
+  const savedLocation = settingsStore.get('savedFileLocation') || remote.app.getPath('documents')
 
   const activeFile = files[activeFileID]
   const openedFiles = openedFileIDs.map(openedID => files[openedID])
@@ -142,9 +144,12 @@ function App () {
   }
 
   const saveCurrentFile = () => {
-    fileHelper.writeFile(activeFile.path, activeFile.body).then(() => {
-      setUnsavedFileIDs(
-        unsavedFileIDs.filter(unsavedFileID => unsavedFileID !== activeFile.id))
+    const {id, path, body, title} = activeFile
+    fileHelper.writeFile(path, body).then(() => {
+      setUnsavedFileIDs(unsavedFileIDs.filter(unsavedFileID => unsavedFileID !== id))
+      if (getAutoSync()) {
+        ipcRenderer.send('upload-file', {key: `${title}.md`, path})
+      }
     })
   }
 
