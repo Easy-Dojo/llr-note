@@ -96,6 +96,13 @@ class QiniuManager {
 
   }
 
+  renameFile(srcKey, destKey) {
+    return new Promise(((resolve, reject) => {
+      this.bucketManager.move(this.bucket, srcKey, this.bucket, destKey, {force: true},
+        this._handleCallback(resolve, reject))
+    }))
+  }
+
   _handleCallback (resolve, reject) {
     return (respErr, respBody, respInfo) => {
       if (respErr) {

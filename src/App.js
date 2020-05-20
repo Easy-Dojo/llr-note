@@ -103,9 +103,12 @@ function App () {
     if (files[id].path) {
       fileHelper.deleteFile(files[id].path).then(() => {
         tabClose(id)
-        const {[id]: value, ...afterDelete} = files
+        const {[id]: deletedFile, ...afterDelete} = files
         setFiles(afterDelete)
         saveFilesToStore(afterDelete)
+        if (getAutoSync() && deletedFile.isSynced) {
+          ipcRenderer.send('delete-file', `${deletedFile.title}.md`)
+        }
       })
     } else {
       tabClose(id)
@@ -144,8 +147,6 @@ function App () {
   // TODO： 相同文件名不能提交
   const createNewFile = (defaultContent) => {
     const newID = uuidv4()
-    console.log('llll')
-    console.log(defaultContent)
     const newFile = {
       id: newID,
       title: '',

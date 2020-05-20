@@ -55,6 +55,16 @@ app.on('ready', function () {
     })
   })
 
+  ipcMain.on('delete-file', (event, args) => {
+    const manager = createCloudManager()
+    manager.deleteFile(args).then(res => {
+      console.log('删除成功')
+      mainWidow.webContents.send('delete-file-success')
+    }).catch(() => {
+      dialog.showErrorBox('同步删除失败', '请检查云同步设置')
+    })
+  })
+
   ipcMain.on('download-file', (event, data) => {
     const manager = createCloudManager()
     const filesObj = fileStore.get('files')
@@ -62,8 +72,6 @@ app.on('ready', function () {
     manager.getStat(data.key).then((resp) => {
       const serverUpdatedTime = Math.round(resp.putTime / 10000)
       const localUpdatedTime = filesObj[id].updatedAt
-      console.log(serverUpdatedTime)
-      console.log(localUpdatedTime)
       if (serverUpdatedTime > localUpdatedTime || !localUpdatedTime) {
         console.log('new file downloaded')
         manager.downloadFile(key, path).then(() => {
