@@ -86,6 +86,7 @@ function App () {
     }
   }
 
+  //TODO: 删除之前弹出提示确认
   const deleteFile = (id) => {
     if (files[id].path) {
       fileHelper.deleteFile(files[id].path).then(() => {
