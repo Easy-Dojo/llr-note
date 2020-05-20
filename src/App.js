@@ -239,12 +239,27 @@ function App () {
     })
   }
 
+  const filesUploaded = () => {
+    const newFiles = objToArr(files).reduce((result, file) => {
+      const currentTime = new Date().getTime()
+      result[file.id] = {
+        ...files[file.id],
+        isSynced: true,
+        updatedAt: currentTime,
+      }
+      return result
+    }, {})
+    setFiles(newFiles)
+    saveFilesToStore(newFiles)
+  }
+
   useIpcRenderer({
     'create-new-file': () => createNewFile(MDContentTemp.default),
     'import-file': importFiles,
     'save-edit-file': saveCurrentFile,
     'active-file-uploaded': activeFileUploaded,
     'file-downloaded': activeFileDownloaded,
+    'files-uploaded': filesUploaded,
     'loading-status': (message, status) => {setIsLoading(status)},
   })
 
@@ -283,7 +298,7 @@ function App () {
             <div className="start-page">选择或者创建新的 Markdown 文档</div>
           }
           {
-            activeFile &&
+            (!isLoading && activeFile) &&
             <>
               <TabList
                 files={openedFiles}

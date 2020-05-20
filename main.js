@@ -84,9 +84,26 @@ app.on('ready', function () {
 
   ipcMain.on('upload-all-to-cloud', () => {
     mainWidow.webContents.send('loading-status', true)
-    setTimeout(() => {
+    const manager = createCloudManager()
+    const filesObj = fileStore.get('files') || {}
+    const uploadPromiseArr = Object.keys(filesObj).map(key => {
+      const file = filesObj[key]
+      return manager.uploadFile(`${file.title}.md`, file.path)
+    })
+    Promise.all(uploadPromiseArr).then(result => {
+      console.log(result)
+      // show uploaded message
+      dialog.showMessageBox({
+        type: 'info',
+        title: `成功上传了${result.length}个文件`,
+        message: `成功上传了${result.length}个文件`,
+      })
+      mainWidow.webContents.send('files-uploaded')
+    }).catch(() => {
+      dialog.showErrorBox('同步失败', '请检查云同步设置')
+    }).finally(() => {
       mainWidow.webContents.send('loading-status', false)
-    }, 2000)
+    })
   })
 
   ipcMain.on('config-is-saved', () => {
