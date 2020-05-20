@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Input, Layout } from 'antd'
+import { Input, Layout, Spin } from 'antd'
 import FileList from './components/FileList'
 import TabList from './components/TabList'
 import { flattenArr, objToArr, timestampToString } from './utils/helper'
@@ -21,7 +21,11 @@ const {Search} = Input
 //TODO 初次加载更新目录下被手动删除的文件
 const fileStore = new Store({name: 'Files Data'})
 const settingsStore = new Store({name: 'Settings'})
-const getAutoSync = ()=>['accessKey', 'secretKey', 'bucketName', 'enableAutoSync'].every(
+const getAutoSync = () => [
+  'accessKey',
+  'secretKey',
+  'bucketName',
+  'enableAutoSync'].every(
   key => !!settingsStore.get(key))
 
 const saveFilesToStore = (files) => {
@@ -39,8 +43,10 @@ function App () {
   const [openedFileIDs, setOpenedFileIDs] = useState([])
   const [unsavedFileIDs, setUnsavedFileIDs] = useState([])
   const [searchedFiles, setSearchedFiles] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
   const filesArry = objToArr(files)
-  const savedLocation = settingsStore.get('savedFileLocation') || remote.app.getPath('documents')
+  const savedLocation = settingsStore.get('savedFileLocation') ||
+    remote.app.getPath('documents')
 
   const activeFile = files[activeFileID]
   const openedFiles = openedFileIDs.map(openedID => files[openedID])
@@ -153,7 +159,8 @@ function App () {
   const saveCurrentFile = () => {
     const {id, path, body, title} = activeFile
     fileHelper.writeFile(path, body).then(() => {
-      setUnsavedFileIDs(unsavedFileIDs.filter(unsavedFileID => unsavedFileID !== id))
+      setUnsavedFileIDs(
+        unsavedFileIDs.filter(unsavedFileID => unsavedFileID !== id))
       if (getAutoSync()) {
         ipcRenderer.send('upload-file', {key: `${title}.md`, path})
       }
@@ -167,8 +174,8 @@ function App () {
       filters: [{name: 'Markdown Files', extensions: ['md']}],
     }).then(result => {
       const filteredPaths = result.filePaths.filter(path => {
-        const alreadyAdded = Object.values(files)
-          .find(file => file.path === path)
+        const alreadyAdded = Object.values(files).
+          find(file => file.path === path)
         return !alreadyAdded
       })
 
@@ -199,8 +206,12 @@ function App () {
   }
 
   const activeFileUploaded = () => {
-    const { id } = activeFile
-    const modifiedFile = {...files[id], isSynced: true, updatedAt: new Date().getTime()}
+    const {id} = activeFile
+    const modifiedFile = {
+      ...files[id],
+      isSynced: true,
+      updatedAt: new Date().getTime(),
+    }
     const newFiles = {...files, [id]: modifiedFile}
     setFiles(newFiles)
     saveFilesToStore(newFiles)
@@ -208,15 +219,21 @@ function App () {
 
   const activeFileDownloaded = (event, message) => {
     const currentFile = files[message.id]
-    const { id, path } = currentFile
+    const {id, path} = currentFile
     fileHelper.readFile(path).then(value => {
       let newFile
       if (message.status === 'download-success') {
-        newFile = { ...files[id], body: value, isLoaded: true, isSynced: true, updatedAt: new Date().getTime() }
+        newFile = {
+          ...files[id],
+          body: value,
+          isLoaded: true,
+          isSynced: true,
+          updatedAt: new Date().getTime(),
+        }
       } else {
-        newFile = { ...files[id], body: value, isLoaded: true}
+        newFile = {...files[id], body: value, isLoaded: true}
       }
-      const newFiles = { ...files, [id]: newFile }
+      const newFiles = {...files, [id]: newFile}
       setFiles(newFiles)
       saveFilesToStore(newFiles)
     })
@@ -228,6 +245,7 @@ function App () {
     'save-edit-file': saveCurrentFile,
     'active-file-uploaded': activeFileUploaded,
     'file-downloaded': activeFileDownloaded,
+    'loading-status': (message, status) => {setIsLoading(status)},
   })
 
   return (
@@ -259,8 +277,9 @@ function App () {
           minHeight: '500px',
           overflow: 'initial',
         }}>
+          {isLoading && <Spin className="loading" tip="Loading..." size="large"/>}
           {
-            !activeFile &&
+            (!isLoading && !activeFile) &&
             <div className="start-page">选择或者创建新的 Markdown 文档</div>
           }
           {
@@ -281,8 +300,9 @@ function App () {
                   minHeight: '515px',
                 }}
               />
-              { activeFile.isSynced &&
-              <span className="sync-status">已同步，上次同步{timestampToString(activeFile.updatedAt)}</span>
+              {activeFile.isSynced &&
+              <span className="sync-status">已同步，上次同步{timestampToString(
+                activeFile.updatedAt)}</span>
               }
             </>
           }

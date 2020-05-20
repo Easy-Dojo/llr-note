@@ -88,7 +88,9 @@ let template = [
       }, {
         label: '全部同步至云端',
         enabled: qiniuIsConfigured,
-
+        click: () => {
+          ipcMain.emit('upload-all-to-cloud')
+        },
       }, {
         label: '从云端下载到本地',
         enabled: qiniuIsConfigured,
