@@ -1,4 +1,6 @@
 const qiniu = require('qiniu')
+const axios = require('axios')
+const fs = require('fs')
 
 class QiniuManager {
   constructor (accessKey, secretKey, bucket) {
@@ -44,6 +46,38 @@ class QiniuManager {
       qiniu.rpc.postWithoutForm(reqURL, digest,
         this._handleCallback(resolve, reject))
     }))
+  }
+
+  getStat(key) {
+    return new Promise((resolve, reject) => {
+      this.bucketManager.stat(this.bucket, key, this._handleCallback(resolve, reject))
+    })
+  }
+
+  downloadFile(key, downloadPath) {
+    // step 1 get the download link
+    // step 2 send the request to download link, return a readable stream
+    // step 3 create a writable stream and pipe to it
+    // step 4 return a promise based result
+    return this.generateDownloadLink(key).then(link => {
+      const timeStamp = new Date().getTime()
+      const url = `${link}?timestamp=${timeStamp}`
+      return axios({
+        url,
+        method: 'GET',
+        responseType: 'stream',
+        headers: {'Cache-Control': 'no-cache'}
+      })
+    }).then(response => {
+      const writer = fs.createWriteStream(downloadPath)
+      response.data.pipe(writer)
+      return new Promise((resolve, reject) => {
+        writer.on('finish', resolve)
+        writer.on('error', reject)
+      })
+    }).catch(err => {
+      return Promise.reject({ err: err.response })
+    })
   }
 
   generateDownloadLink (key) {

@@ -5,6 +5,7 @@ const path = require('path')
 const menuTemplate = require('./src/menuTemplate')
 const Store = require('electron-store')
 const settingsStore = new Store({name: 'Settings'})
+const fileStore = new Store({name: 'Files Data'})
 const QiniuManager = require('./src/utils/QiniuManager')
 
 const createCloudManager = ()=>{
@@ -53,6 +54,31 @@ app.on('ready', function () {
     })
     .catch(()=>{
       dialog.showErrorBox('同步失败','请检查云同步设置')
+    })
+  })
+
+  ipcMain.on('download-file', (event, data) => {
+    const manager = createCloudManager()
+    const filesObj = fileStore.get('files')
+    const { key, path, id } = data
+    manager.getStat(data.key).then((resp) => {
+      const serverUpdatedTime = Math.round(resp.putTime / 10000)
+      const localUpdatedTime = filesObj[id].updatedAt
+      console.log(serverUpdatedTime)
+      console.log(localUpdatedTime)
+      if (serverUpdatedTime > localUpdatedTime || !localUpdatedTime) {
+        console.log("new file downloaded")
+        manager.downloadFile(key, path).then(() => {
+          mainWidow.webContents.send('file-downloaded', {status: 'download-success', id})
+        })
+      } else {
+        console.log("no new file")
+        mainWidow.webContents.send('file-downloaded', {status: 'no-new-file', id})
+      }
+    }, (error) => {
+      if (error.statusCode === 612) {
+        mainWidow.webContents.send('file-downloaded', {status: 'no-file', id})
+      }
     })
   })
 
