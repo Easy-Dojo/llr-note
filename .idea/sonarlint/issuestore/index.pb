@@ -69,3 +69,7 @@ F
 test.js,2/d/2d408aaa5a340d732402a346a7f915ed8a3d8a04
 I
 src/utils/QiniuManager.js,3/e/3e1f7dd190834914b02ce85199eb37020dff4086
+=
+src/index.css,c/5/c5d38a62d1faae90a2acaa34b79a7ef365c917e4
+E
+settings/settings.css,7/0/70dc22c93fa3aaf63b4ed4644033f4f92d8eb878

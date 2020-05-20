@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Input, Layout } from 'antd'
 import FileList from './components/FileList'
 import TabList from './components/TabList'
-import { flattenArr, objToArr } from './utils/helper'
+import { flattenArr, objToArr, timestampToString } from './utils/helper'
 import SimpleMDEEditor from 'react-simplemde-editor'
 import fileHelper from './utils/fileHelper'
 import { v4 as uuidv4 } from 'uuid'
@@ -26,8 +26,8 @@ const getAutoSync = ()=>['accessKey', 'secretKey', 'bucketName', 'enableAutoSync
 
 const saveFilesToStore = (files) => {
   const filesStoreObj = objToArr(files).reduce((result, file) => {
-    const {id, path, title, createdAt} = file
-    result[id] = {id, path, title, createdAt}
+    const {id, path, title, createdAt, isSynced, updatedAt} = file
+    result[id] = {id, path, title, createdAt, isSynced, updatedAt}
     return result
   }, {})
   fileStore.set('files', filesStoreObj)
@@ -191,10 +191,19 @@ function App () {
     })
   }
 
+  const activeFileUploaded = () => {
+    const { id } = activeFile
+    const modifiedFile = {...files[id], isSynced: true, updatedAt: new Date().getTime()}
+    const newFiles = {...files, [id]: modifiedFile}
+    setFiles(newFiles)
+    saveFilesToStore(newFiles)
+  }
+
   useIpcRenderer({
     'create-new-file': () => createNewFile(MDContentTemp.default),
     'import-file': importFiles,
     'save-edit-file': saveCurrentFile,
+    'active-file-uploaded': activeFileUploaded
   })
 
   return (
@@ -248,6 +257,9 @@ function App () {
                   minHeight: '515px',
                 }}
               />
+              { activeFile.isSynced &&
+              <span className="sync-status">已同步，上次同步{timestampToString(activeFile.updatedAt)}</span>
+              }
             </>
           }
         </Content>

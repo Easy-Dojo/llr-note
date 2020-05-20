@@ -47,7 +47,10 @@ app.on('ready', function () {
   ipcMain.on('upload-file', (event,args)=>{
     const manager = createCloudManager()
     manager.uploadFile(args.key, args.path)
-    .then(res=>{console.log('上传成功', res)})
+    .then(res=>{
+      console.log('上传成功', res)
+      mainWidow.webContents.send('active-file-uploaded')
+    })
     .catch(()=>{
       dialog.showErrorBox('同步失败','请检查云同步设置')
     })
