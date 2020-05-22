@@ -55,7 +55,6 @@ function App () {
   const fileClick = (fileID) => {
     const currentFile = files[fileID]
     const {id, title, path, isLoaded, isNew} = currentFile
-    console.log({id, title, path, isLoaded, isNew})
     if (!isNew) {
       setActiveFileID(fileID)
       if (!isLoaded) {
@@ -254,6 +253,11 @@ function App () {
     saveFilesToStore(newFiles)
   }
 
+  const filesDownloaded = (message, filesObj) => {
+    setFiles(filesObj)
+    saveFilesToStore(filesObj)
+  }
+
   useIpcRenderer({
     'create-new-file': () => createNewFile(MDContentTemp.default),
     'import-file': importFiles,
@@ -261,6 +265,7 @@ function App () {
     'active-file-uploaded': activeFileUploaded,
     'file-downloaded': activeFileDownloaded,
     'files-uploaded': filesUploaded,
+    'files-downloaded': filesDownloaded,
     'loading-status': (message, status) => {setIsLoading(status)},
   })
 

@@ -1,4 +1,5 @@
 const AppWindow = require('./src/AppWindow')
+const uuidv4 = require('uuid').v4
 const {app, Menu, ipcMain, dialog} = require('electron')
 const isDev = require('electron-is-dev')
 const path = require('path')
@@ -13,6 +14,14 @@ const createCloudManager = () => {
   const secretKey = settingsStore.get('secretKey')
   const bucketName = settingsStore.get('bucketName')
   return new QiniuManager(accessKey, secretKey, bucketName)
+}
+
+const getFileByKeyInFileObj = (filesObj, fileKey) => {
+  const localFileId = Object.keys(filesObj).find(key => {
+    return `${filesObj[key].title}.md` === fileKey
+  })
+
+  return localFileId && filesObj[localFileId]
 }
 
 app.on('ready', function () {
@@ -99,7 +108,6 @@ app.on('ready', function () {
       return manager.uploadFile(`${file.title}.md`, file.path)
     })
     Promise.all(uploadPromiseArr).then(result => {
-      console.log(result)
       // show uploaded message
       dialog.showMessageBox({
         type: 'info',
@@ -107,6 +115,73 @@ app.on('ready', function () {
         message: `成功上传了${result.length}个文件`,
       })
       mainWidow.webContents.send('files-uploaded')
+    }).catch(() => {
+      dialog.showErrorBox('同步失败', '请检查云同步设置')
+    }).finally(() => {
+      mainWidow.webContents.send('loading-status', false)
+    })
+  })
+
+  ipcMain.on('download-all-from-cloud', () => {
+    mainWidow.webContents.send('loading-status', true)
+    const manager = createCloudManager()
+    const filesObj = fileStore.get('files') || {}
+    const savedLocation = settingsStore.get('savedFileLocation') ||
+      app.getPath('documents')
+
+    manager.getFileInfoList()
+    .then(({items})=> {
+      const downloadPromiseArr = items
+        .filter(item=>{
+          let needDownLoad = true;
+          const localFile = getFileByKeyInFileObj(filesObj, item.key)
+          const serverFileUpdatedTime = Math.round(item.putTime / 10000)
+          if(localFile && localFile.updatedAt > serverFileUpdatedTime){
+            needDownLoad = false
+          }
+          return needDownLoad
+        })
+        .map(item=>{
+          const localFile = getFileByKeyInFileObj(filesObj, item.key)
+          let savedPath;
+          if(localFile &&localFile.path){
+            savedPath = localFile.path
+          }else{
+            savedPath = path.join(savedLocation, item.key)
+          }
+          return manager.downloadFile(item.key, savedPath)
+        })
+      return Promise.all(downloadPromiseArr)
+    })
+    .then(result=>{
+      // show uploaded message
+      dialog.showMessageBox({
+        type: 'info',
+        title: `成功下载了${result.length}个文件`,
+        message: `成功下载了${result.length}个文件`,
+      })
+      const finalFilesObj = result.reduce((newFilesObj, qiniuFileName)=>{
+        const localFile = getFileByKeyInFileObj(filesObj, qiniuFileName)
+        if(localFile){
+          const updatedItem = {
+            ...localFile,
+            isSynced: true,
+            updatedAt: new Date().getTime()
+          }
+          return {...newFilesObj, [localFile.id]: updatedItem}
+        }else {
+          const newID = uuidv4()
+          const newFile = {
+            id: newID,
+            title: qiniuFileName.substring(0, qiniuFileName.indexOf('.')),
+            path: path.join(savedLocation, qiniuFileName),
+            isSynced: true,
+            updatedAt: new Date().getTime()
+          }
+          return {...newFilesObj, [newID]: newFile}
+        }
+      }, {...filesObj})
+      mainWidow.webContents.send('files-downloaded', finalFilesObj)
     }).catch(() => {
       dialog.showErrorBox('同步失败', '请检查云同步设置')
     }).finally(() => {

@@ -48,13 +48,14 @@ class QiniuManager {
     }))
   }
 
-  getStat(key) {
+  getStat (key) {
     return new Promise((resolve, reject) => {
-      this.bucketManager.stat(this.bucket, key, this._handleCallback(resolve, reject))
+      this.bucketManager.stat(this.bucket, key,
+        this._handleCallback(resolve, reject))
     })
   }
 
-  downloadFile(key, downloadPath) {
+  downloadFile (key, downloadPath) {
     // step 1 get the download link
     // step 2 send the request to download link, return a readable stream
     // step 3 create a writable stream and pipe to it
@@ -66,17 +67,17 @@ class QiniuManager {
         url,
         method: 'GET',
         responseType: 'stream',
-        headers: {'Cache-Control': 'no-cache'}
+        headers: {'Cache-Control': 'no-cache'},
       })
     }).then(response => {
       const writer = fs.createWriteStream(downloadPath)
       response.data.pipe(writer)
       return new Promise((resolve, reject) => {
-        writer.on('finish', resolve)
+        writer.on('finish', resolve(key))
         writer.on('error', reject)
       })
     }).catch(err => {
-      return Promise.reject({ err: err.response })
+      return Promise.reject({err: err.response})
     })
   }
 
@@ -84,21 +85,31 @@ class QiniuManager {
     const domainPromise = this.publicBuketDomain
       ? Promise.resolve([this.publicBuketDomain])
       : this.getBucketDomain()
-    return domainPromise.then(data=>{
+    return domainPromise.then(data => {
       if (Array.isArray(data) && data.length > 0) {
-        const  pattern = /^https?/
-        this.publicBuketDomain = pattern.test(data[0]) ? data[0] : `http://${data[0]}`
+        const pattern = /^https?/
+        this.publicBuketDomain = pattern.test(data[0])
+          ? data[0]
+          : `http://${data[0]}`
         return this.bucketManager.publicDownloadUrl(this.publicBuketDomain, key)
       } else {
-        throw Error("域名未找到")
+        throw Error('域名未找到')
       }
     })
 
   }
 
-  renameFile(srcKey, destKey) {
+  renameFile (srcKey, destKey) {
     return new Promise(((resolve, reject) => {
-      this.bucketManager.move(this.bucket, srcKey, this.bucket, destKey, {force: true},
+      this.bucketManager.move(this.bucket, srcKey, this.bucket, destKey,
+        {force: true},
+        this._handleCallback(resolve, reject))
+    }))
+  }
+
+  getFileInfoList () {
+    return new Promise(((resolve, reject) => {
+      this.bucketManager.listPrefix(this.bucket, null,
         this._handleCallback(resolve, reject))
     }))
   }
