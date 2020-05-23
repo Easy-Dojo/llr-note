@@ -74,6 +74,16 @@ app.on('ready', function () {
     })
   })
 
+  ipcMain.on('rename-file', (event, args) => {
+    const manager = createCloudManager()
+    manager.renameFile(args.srcKey, args.destKey).then(res => {
+      console.log('重命名成功')
+      mainWidow.webContents.send('rename-file-success')
+    }).catch(() => {
+      dialog.showErrorBox('重命名云文件失败', '请检查云同步设置')
+    })
+  })
+
   ipcMain.on('download-file', (event, data) => {
     const manager = createCloudManager()
     const filesObj = fileStore.get('files')

@@ -127,12 +127,19 @@ function App () {
       fileHelper.writeFile(newPath, files[id].body).then(() => {
         setFiles(newFiles)
         saveFilesToStore(newFiles)
+        if (getAutoSync()) {
+          ipcRenderer.send('upload-file', {key: `${modifiedFile.title}.md`, path: modifiedFile.path})
+        }
       })
     } else {
       const oldPath = files[id].path
+      const oldFileTitle = files[id].title
       fileHelper.renameFile(oldPath, newPath).then(() => {
         setFiles(newFiles)
         saveFilesToStore(newFiles)
+        if (getAutoSync()) {
+          ipcRenderer.send('rename-file', {srcKey: `${oldFileTitle}.md`, destKey: `${title}.md`})
+        }
       })
     }
   }
