@@ -73,3 +73,9 @@ I
 src/index.css,c/5/c5d38a62d1faae90a2acaa34b79a7ef365c917e4
 E
 settings/settings.css,7/0/70dc22c93fa3aaf63b4ed4644033f4f92d8eb878
+D
+public/manifest.json,4/2/42e89cd2213b9d5dfae4f63522702c623170d792
+A
+webpack.config.js,d/5/d5595158cc48f9bf3e51b06f6e6805a8fd2d6262
+C
+config-overrides.js,0/5/0531b356b1f4be3b5576f5a7a7ec72e5e4bf1762

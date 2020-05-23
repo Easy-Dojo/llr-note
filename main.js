@@ -1,13 +1,13 @@
-const AppWindow = require('./src/AppWindow')
-const uuidv4 = require('uuid').v4
-const {app, Menu, ipcMain, dialog} = require('electron')
+const { app, Menu, ipcMain, dialog } = require('electron')
+const uuidv4 = require('uuid/v4')
 const isDev = require('electron-is-dev')
 const path = require('path')
 const menuTemplate = require('./src/menuTemplate')
 const Store = require('electron-store')
+const AppWindow = require('./src/AppWindow')
+const QiniuManager = require('./src/utils/QiniuManager')
 const settingsStore = new Store({name: 'Settings'})
 const fileStore = new Store({name: 'Files Data'})
-const QiniuManager = require('./src/utils/QiniuManager')
 
 const createCloudManager = () => {
   const accessKey = settingsStore.get('accessKey')
@@ -25,20 +25,23 @@ const getFileByKeyInFileObj = (filesObj, fileKey) => {
 }
 
 app.on('ready', function () {
-  require('devtron').install()
-  const urlLocation = isDev ? 'http://localhost:3000/' : './renderer/index.html'
-  let mainWidow = new AppWindow({
-    width: 800,
-    height: 600,
-  }, urlLocation)
-  console.log('打开窗口======》名称：' + mainWidow.getTitle())
-  // set up menu
-  const menu = Menu.buildFromTemplate(menuTemplate)
-  Menu.setApplicationMenu(menu)
+  const mainWindowConfig = {
+    width: 1024,
+    height: 680
+  }
+
+  const urlLocation = isDev
+    ? 'http://localhost:3000'
+    : `file://${path.join(__dirname, './index.html')}`
+  let mainWidow = new AppWindow(mainWindowConfig, urlLocation)
 
   mainWidow.on('closed', () => {
     mainWidow = null
   })
+
+  // set up menu
+  const menu = Menu.buildFromTemplate(menuTemplate)
+  Menu.setApplicationMenu(menu)
 
   // hook up main events
   ipcMain.on('open-settings-window', () => {
@@ -215,8 +218,4 @@ app.on('ready', function () {
       })
     switchItems(qiniuIsConfigured)
   })
-})
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
 })
