@@ -1,10 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Menu } from 'antd'
-import CloseOutlined from '@ant-design/icons/lib/icons/CloseOutlined'
-import MyIcon from './MyIcon'
 import '../styles/TabList.scss'
 import classNames from 'classnames'
+import CloseCircleOutlined
+  from '@ant-design/icons/lib/icons/CloseCircleOutlined'
+import ExclamationCircleOutlined
+  from '@ant-design/icons/lib/icons/ExclamationCircleOutlined'
 
 const TabList = ({files, activeId, unsavedIds, onTabClick, onCloseTab}) => {
   return <Menu className="tab-list-component" style={{lineHeight: '36px'}}
@@ -20,9 +22,9 @@ const TabList = ({files, activeId, unsavedIds, onTabClick, onCloseTab}) => {
           onClick={() => {onTabClick(file.id)}}>
           <span style={{marginRight: '10px'}}>{file.title}</span>
           <span className="unsaved-icon">{withUnsavedMark &&
-          <MyIcon type="icon-circle"/>}</span>
+          <ExclamationCircleOutlined size='small'/>}</span>
           <span className="close-icon">{
-            <CloseOutlined size='small' onClick={(e) => {
+            <CloseCircleOutlined size='small' onClick={(e) => {
               e.stopPropagation()
               onCloseTab(file.id)
             }}/>

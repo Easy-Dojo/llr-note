@@ -9,9 +9,9 @@
     "name": "Lingrui Liang",
     "email": "lrliang@thoughtworks.com"
   },
+  "repository": "https://github.com/Easy-Dojo/llr-note.git",
   "dependencies": {
-    "electron-store": "^5.1.1",
-    "uuid": "^7.0.3"
+    "electron-store": "^5.1.1"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -21,7 +21,11 @@
     "buildMain": "webpack",
     "electron-dev": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
     "pack": "electron-builder --dir",
-    "prepack": "yarn build && yarn buildMain"
+    "prepack": "yarn build && yarn buildMain",
+    "predist": "yarn build && yarn buildMain",
+    "dist": "electron-builder",
+    "prerelease": "yarn build && yarn buildMain",
+    "release": "cross-env GH_TOKEN=ddf1db039b01531f8beb37677c5fdf2515d1c5c2 electron-builder"
   },
   "build": {
     "appId": "com.my-website.my-app",
@@ -30,6 +34,7 @@
     "extraMetadata": {
       "main": "./build/main.js"
     },
+    "publish": ["github"],
     "mac": {
       "category": "public.app-category.utilities"
     },
@@ -99,6 +104,7 @@
     "prop-types": "^15.7.2",
     "qiniu": "^7.3.1",
     "react": "^16.13.1",
+    "uuid": "^7.0.3",
     "react-app-rewire-less": "^2.1.3",
     "react-app-rewired": "^2.1.5",
     "react-dom": "^16.13.1",
