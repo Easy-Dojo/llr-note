@@ -27,7 +27,12 @@ const getFileByKeyInFileObj = (filesObj, fileKey) => {
 
 app.on('ready', function () {
   autoUpdater.autoDownload = false
-  autoUpdater.checkForUpdatesAndNotify()
+  if (isDev) {
+    autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml') // 本地调试自动更新
+    autoUpdater.checkForUpdates() // 本地检查更新
+  } else {
+    autoUpdater.checkForUpdatesAndNotify() // 线上检查更新
+  }
   autoUpdater.on('error', (error) => {
     dialog.showErrorBox('Error: ', error == null ? "unknown" : (error.stack || error).toString())
   })
